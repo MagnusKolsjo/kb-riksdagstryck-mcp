@@ -1,0 +1,5224 @@
+[
+  {
+    "file": "roa_1789_2_.xml",
+    "size_bytes": 3609153,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 17074,
+      "line": 17062,
+      "rect": 10926,
+      "par": 2860,
+      "block": 1483,
+      "region": 1483,
+      "text": 1112,
+      "separator": 758,
+      "start": 758,
+      "end": 758,
+      "elemId": 558,
+      "page": 251,
+      "stream": 36,
+      "section": 28,
+      "mainText": 27,
+      "cell": 14,
+      "row": 7,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 770473,
+    "total_words": 154094,
+    "examples": {
+      "formatting": [
+        "RidLttskaptt-ch Wclil",
+        "Riksdagen i Stockholm",
+        "Tryckke hyK ^rrvLLS I. dtonvs^r<Lr«- rLo§»"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@align @leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  },
+  {
+    "file": "roa_1645-1651__.xml",
+    "size_bytes": 6374297,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 26823,
+      "line": 26822,
+      "rect": 19103,
+      "par": 8234,
+      "block": 3357,
+      "region": 3357,
+      "text": 2284,
+      "separator": 1427,
+      "start": 1427,
+      "end": 1427,
+      "elemId": 837,
+      "page": 333,
+      "cell": 274,
+      "row": 116,
+      "stream": 114,
+      "section": 48,
+      "mainText": 47,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "dropCapCharsCount",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.2
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.1
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 1317399,
+    "total_words": 263479,
+    "examples": {
+      "formatting": [
+        "RIDDERSKAPS OCH ADELS",
+        "IWAlt HvEGGSTRÖMS BOKTRYCKERI",
+        "RIDDERSKAPETS OCH ADELNS"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@align @leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  },
+  {
+    "file": "roa_1823_7__05.xml",
+    "size_bytes": 1892634,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 9671,
+      "line": 9669,
+      "rect": 2094,
+      "par": 1844,
+      "block": 998,
+      "region": 998,
+      "text": 918,
+      "elemId": 387,
+      "page": 300,
+      "separator": 162,
+      "start": 162,
+      "end": 162,
+      "cell": 73,
+      "stream": 18,
+      "section": 11,
+      "row": 11,
+      "mainText": 9,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "rowSpan",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.2
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.1
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 399934,
+    "total_words": 79986,
+    "examples": {
+      "formatting": [
+        "&en 87 J ugust i J-Zrn-",
+        "juller upphöra, och dg i förra händelsen inne-,",
+        "yånarne jfr o i behof af biträde, skulle i den se¬"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@align @leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@rowSpan @leftBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  },
+  {
+    "file": "rdbesl_1766__.xml",
+    "size_bytes": 106112,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "line": 470,
+      "formatting": 470,
+      "rect": 258,
+      "block": 65,
+      "region": 65,
+      "par": 65,
+      "separator": 31,
+      "start": 31,
+      "end": 31,
+      "elemId": 28,
+      "stream": 17,
+      "text": 17,
+      "page": 9,
+      "section": 5,
+      "mainText": 4,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 24501,
+    "total_words": 4900,
+    "examples": {
+      "formatting": [
+        "Gjordt »samtyckt och fdrafffedadt pä thrn All¬",
+        "männa Riks Dagen, som M",
+        "I Stockholm then 15 OÄoder 1766."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "rdbesl_1809__.xml",
+    "size_bytes": 339682,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 1490,
+      "line": 1487,
+      "par": 1078,
+      "rect": 846,
+      "block": 198,
+      "region": 198,
+      "text": 141,
+      "elemId": 139,
+      "stream": 90,
+      "separator": 53,
+      "start": 53,
+      "end": 53,
+      "page": 15,
+      "section": 10,
+      "mainText": 8,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 35473,
+    "total_words": 7094,
+    "examples": {
+      "formatting": [
+        "Sweriges Rikes Ständers",
+        "Gjordt och samtyckt i AocLNolm",
+        "Lvm VkLUL L krivilc^io S:« K:« öltsjrtir."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "rdbesl_1779__.xml",
+    "size_bytes": 715945,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 2960,
+      "line": 2951,
+      "rect": 2685,
+      "par": 1589,
+      "block": 289,
+      "region": 289,
+      "text": 187,
+      "elemId": 133,
+      "separator": 117,
+      "start": 117,
+      "end": 117,
+      "page": 51,
+      "stream": 30,
+      "section": 15,
+      "mainText": 14,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 119020,
+    "total_words": 23804,
+    "examples": {
+      "formatting": [
+        "Giordt, Samtyckt och Förafskedadt",
+        "Som stöts i Lrockkolm then r6 ^Lnuarii",
+        "6um Oratis §r krivileZio 8:L K.L X^amis."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "bn_1731-1734___03.xml",
+    "size_bytes": 2313014,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "line": 11192,
+      "formatting": 11192,
+      "par": 4856,
+      "rect": 2155,
+      "block": 927,
+      "region": 927,
+      "text": 818,
+      "elemId": 448,
+      "separator": 258,
+      "start": 258,
+      "end": 258,
+      "page": 198,
+      "stream": 148,
+      "cell": 121,
+      "row": 58,
+      "section": 26,
+      "mainText": 21,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.3
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 403458,
+    "total_words": 80691,
+    "examples": {
+      "formatting": [
+        "1734 den 13 december.",
+        "nästkommande års början må kunna ställas i wäreket. Emot",
+        "hwilcken höga nåd ete. etc."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  },
+  {
+    "file": "bn_1817-1818_3__02.xml",
+    "size_bytes": 1108742,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 5376,
+      "line": 5373,
+      "rect": 1998,
+      "par": 978,
+      "block": 573,
+      "region": 573,
+      "text": 454,
+      "elemId": 277,
+      "separator": 234,
+      "start": 234,
+      "end": 234,
+      "page": 170,
+      "stream": 37,
+      "section": 8,
+      "mainText": 5,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 232478,
+    "total_words": 46495,
+    "examples": {
+      "formatting": [
+        "mälsBalken, om beräkningsgrunden för beloppet af",
+        "fördel; z:o om betalning till Kronofogdarne för",
+        "deras påskrift ä Ulmätningsdomar, samt deras rät,"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@align @leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "bn_1778-1779__.xml",
+    "size_bytes": 1911698,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 8488,
+      "line": 8484,
+      "par": 3241,
+      "rect": 1678,
+      "block": 1099,
+      "region": 1099,
+      "text": 901,
+      "elemId": 620,
+      "separator": 330,
+      "start": 330,
+      "end": 330,
+      "stream": 257,
+      "page": 228,
+      "section": 56,
+      "cell": 54,
+      "mainText": 49,
+      "row": 27,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.1
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 409242,
+    "total_words": 81848,
+    "examples": {
+      "formatting": [
+        "PÅ RIKSGÄLDSKONTORETS UPPDRAG",
+        "Förteckning över ärenders föredragning i bondeståndet   11",
+        "Protokoll och extraktprotokoll   21-40"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@align]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  },
+  {
+    "file": "pr_1834-35_8__03.xml",
+    "size_bytes": 320135,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "line": 1752,
+      "formatting": 1752,
+      "par": 354,
+      "rect": 142,
+      "block": 139,
+      "region": 139,
+      "text": 139,
+      "elemId": 54,
+      "page": 52,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1,
+      "section": 1,
+      "stream": 1,
+      "mainText": 1,
+      "separator": 1,
+      "start": 1,
+      "end": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 67389,
+    "total_words": 13477,
+    "examples": {
+      "formatting": [
+        "skottet haft i åtanka de smärre gästgifveriet",
+        "eller skjutsombyten vid häradsväg , der ingen",
+        "håll- och föga reserv-skjuts förefinnes, och"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "pr_1856-58_reg_.xml",
+    "size_bytes": 2678650,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 11915,
+      "line": 11898,
+      "par": 7178,
+      "rect": 1589,
+      "text": 1299,
+      "block": 797,
+      "region": 797,
+      "cell": 589,
+      "elemId": 275,
+      "page": 236,
+      "separator": 99,
+      "start": 99,
+      "end": 99,
+      "row": 59,
+      "stream": 8,
+      "section": 3,
+      "mainText": 3,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id",
+        "orientation"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.9
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.2
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.1
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.1
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 496637,
+    "total_words": 99327,
+    "examples": {
+      "formatting": [
+        "Lagtima Riksdagen i Stockholm",
+        "TBVCKT HOS ISAAC MASKUS,",
+        "(Mot.) betyder Motion, väckt i Preste-Ståndet."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  },
+  {
+    "file": "pr_1734___03.xml",
+    "size_bytes": 739689,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "line": 4655,
+      "formatting": 4655,
+      "par": 967,
+      "rect": 355,
+      "block": 200,
+      "region": 200,
+      "text": 164,
+      "elemId": 113,
+      "page": 52,
+      "separator": 36,
+      "start": 36,
+      "end": 36,
+      "stream": 6,
+      "section": 3,
+      "mainText": 2,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 116256,
+    "total_words": 23251,
+    "examples": {
+      "formatting": [
+        "Efter personnamnen anges titel vid tidpunkten för första omnämnande",
+        "och så långt möjligt även slutlig titel. Parentes kring de högadliga tit¬",
+        "larna friherre och greve innebär, att introduktion i denna värdighet ej"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "bg_1840-41_4__02.xml",
+    "size_bytes": 3077669,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 14677,
+      "line": 14674,
+      "rect": 5135,
+      "par": 3081,
+      "block": 1117,
+      "region": 1117,
+      "text": 774,
+      "separator": 347,
+      "start": 347,
+      "end": 347,
+      "elemId": 295,
+      "page": 143,
+      "section": 6,
+      "stream": 6,
+      "mainText": 6,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 771854,
+    "total_words": 154370,
+    "examples": {
+      "formatting": [
+        "far, beklagar jag, att personer kunna finnas inom detta upp¬",
+        "lysta Stånd, som försvara bestrafifningarne i den emot fylleri",
+        "och dryckenskap den 24 Augusti 1813 utfärdade Förordning."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "bg_1840-41_bil__02.xml",
+    "size_bytes": 515645,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "line": 2666,
+      "formatting": 2666,
+      "par": 574,
+      "rect": 232,
+      "block": 177,
+      "region": 177,
+      "text": 162,
+      "elemId": 78,
+      "page": 56,
+      "separator": 16,
+      "start": 16,
+      "end": 16,
+      "stream": 7,
+      "section": 4,
+      "mainText": 3,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 135947,
+    "total_words": 27189,
+    "examples": {
+      "formatting": [
+        "I sista Plenum väcktes fråga om Expeditions-afgiftens af-",
+        "skaffande; huru denna afgift tillkommit, oell att det blott",
+        "var på försök på tre år, tror jag mig blott behöfva nämna,"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "bg_1809-1810_3-1__02.xml",
+    "size_bytes": 3025913,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 14004,
+      "line": 13996,
+      "rect": 7255,
+      "par": 3870,
+      "block": 1334,
+      "region": 1334,
+      "text": 1221,
+      "separator": 583,
+      "start": 583,
+      "end": 583,
+      "elemId": 480,
+      "cell": 241,
+      "page": 212,
+      "row": 70,
+      "stream": 39,
+      "section": 19,
+      "mainText": 18,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "rowSpan",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.4
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.1
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 586831,
+    "total_words": 117366,
+    "examples": {
+      "formatting": [
+        "L^creteraren alt för mycket fästat stn blick pä Sta>",
+        "tenö nöd, men äfwen kommit att beögna det i rån.",
+        "kan insinuerade botemedlets följder, han da warit lika"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@align @leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent @lineSpacing]",
+    "parse_error": ""
+  },
+  {
+    "file": "sakreg_1809-1866_1__020001.xml",
+    "size_bytes": 45303297,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "rect": 221865,
+      "par": 114638,
+      "text": 95825,
+      "cell": 92237,
+      "formatting": 90775,
+      "line": 90772,
+      "block": 35031,
+      "region": 35031,
+      "separator": 30918,
+      "start": 30918,
+      "end": 30918,
+      "row": 6984,
+      "elemId": 3436,
+      "stream": 3069,
+      "page": 237,
+      "section": 118,
+      "mainText": 63,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id",
+        "orientation"
+      ],
+      "par": [
+        "align",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "rowSpan",
+        "topBorder",
+        "width"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 4.9
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 5.9
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 6.8
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 7.8
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 898108,
+    "total_words": 179621,
+    "examples": {
+      "formatting": [
+        "Riksståndens protokoll.",
+        "j Motioner om ändring i stadgaudena ang. för¬",
+        "myndares förvaltning af omyndigs egendom"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <row>\n        <cell>  [@leftBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent @lineSpacing]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "sakreg_1809-1866_2__02.xml",
+    "size_bytes": 46157732,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "rect": 190550,
+      "par": 129246,
+      "text": 109564,
+      "cell": 106402,
+      "formatting": 95676,
+      "line": 95672,
+      "block": 30429,
+      "region": 30429,
+      "separator": 26705,
+      "start": 26705,
+      "end": 26705,
+      "row": 8182,
+      "elemId": 2982,
+      "stream": 2564,
+      "page": 256,
+      "section": 137,
+      "mainText": 84,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id",
+        "orientation"
+      ],
+      "par": [
+        "align",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "rowSpan",
+        "topBorder",
+        "width"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 4.9
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 5.9
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 6.9
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 7.9
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 917843,
+    "total_words": 183568,
+    "examples": {
+      "formatting": [
+        "Riksståndens protokoll.",
+        "Motion om beredande af sådan för civile em-",
+        "bets- och tjenstemän afslås."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <row>\n        <cell>  [@bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent @lineSpacing]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "persreg_1809-1866___02.xml",
+    "size_bytes": 6532854,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "line": 28528,
+      "formatting": 28528,
+      "rect": 13989,
+      "par": 13401,
+      "block": 3578,
+      "region": 3578,
+      "text": 2088,
+      "separator": 1758,
+      "start": 1758,
+      "end": 1758,
+      "elemId": 1462,
+      "cell": 290,
+      "stream": 183,
+      "page": 86,
+      "section": 42,
+      "row": 40,
+      "mainText": 37,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.3
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 952129,
+    "total_words": 190425,
+    "examples": {
+      "formatting": [
+        "1810 urt. Elektor för ståndets utskotts¬",
+        "val 29. Ledamot i hemliga utskottet 48.",
+        "Yttranden 40, 355, 437."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage]\n          <elemId>  [@id]\n          <mainText>  [@columnCount]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@colSpan @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  },
+  {
+    "file": "ku_1810__.xml",
+    "size_bytes": 1652804,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 7360,
+      "line": 7355,
+      "rect": 3364,
+      "par": 2060,
+      "text": 1472,
+      "cell": 1166,
+      "block": 669,
+      "region": 669,
+      "separator": 366,
+      "start": 366,
+      "end": 366,
+      "elemId": 281,
+      "page": 216,
+      "row": 188,
+      "stream": 42,
+      "section": 29,
+      "mainText": 24,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id",
+        "orientation"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "rowSpan",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 4.6
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 5.2
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.3
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.3
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 279167,
+    "total_words": 55833,
+    "examples": {
+      "formatting": [
+        "Rikfens Högloft, Ständers",
+        "Conftitutions - Utfkotts",
+        "National-Reprefentationen,"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@align @leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@lineSpacing]",
+    "parse_error": ""
+  },
+  {
+    "file": "ku_1809-1810___03.xml",
+    "size_bytes": 1254715,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 5385,
+      "line": 5383,
+      "par": 2070,
+      "text": 1498,
+      "rect": 1442,
+      "cell": 1135,
+      "block": 632,
+      "region": 632,
+      "separator": 314,
+      "start": 314,
+      "end": 314,
+      "elemId": 166,
+      "page": 132,
+      "row": 114,
+      "stream": 24,
+      "section": 18,
+      "mainText": 17,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id",
+        "orientation"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "rowSpan",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 4.5
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 5.2
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.4
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.4
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 200349,
+    "total_words": 40069,
+    "examples": {
+      "formatting": [
+        "Bilaga till Meni. N-o 36.",
+        "men endast till bedömandet af deras förhållande till",
+        "»varande Lagar. En inkräktning af magt kan,"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@lineSpacing]",
+    "parse_error": ""
+  },
+  {
+    "file": "ku_prot_1810_1812_1815___02.xml",
+    "size_bytes": 2705037,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "line": 11437,
+      "formatting": 11437,
+      "rect": 6086,
+      "par": 4195,
+      "block": 1611,
+      "region": 1611,
+      "text": 1244,
+      "elemId": 736,
+      "separator": 564,
+      "start": 564,
+      "end": 564,
+      "stream": 417,
+      "page": 129,
+      "section": 78,
+      "mainText": 60,
+      "cell": 15,
+      "row": 5,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 506349,
+    "total_words": 101269,
+    "examples": {
+      "formatting": [
+        "Föredrogos följande protocolls Utdrag.",
+        "I från det Hedervärda Bonde Ståndet af den 20 Mars, om bi¬",
+        "fall til Const: Utskottets Förslag at Justitia Ombudsmannens"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  },
+  {
+    "file": "bih_1823_3_reg__02.xml",
+    "size_bytes": 831147,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "line": 3637,
+      "formatting": 3637,
+      "rect": 3256,
+      "par": 1267,
+      "block": 313,
+      "region": 313,
+      "text": 203,
+      "separator": 149,
+      "start": 149,
+      "end": 149,
+      "elemId": 115,
+      "page": 55,
+      "stream": 10,
+      "section": 4,
+      "mainText": 4,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 121389,
+    "total_words": 24277,
+    "examples": {
+      "formatting": [
+        "Lif. af PresteStåndet, ix s 726, af Bon¬",
+        "deStåndet, IX s ^34 > af BorgareStåndet,",
+        "IX s 807, af Adeln, IX s 84o."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "bih_1853-54_3__02.xml",
+    "size_bytes": 968375,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 4192,
+      "line": 4188,
+      "par": 1350,
+      "rect": 873,
+      "block": 525,
+      "region": 525,
+      "text": 453,
+      "elemId": 221,
+      "page": 138,
+      "separator": 79,
+      "start": 79,
+      "end": 79,
+      "stream": 34,
+      "section": 25,
+      "mainText": 25,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id"
+      ],
+      "par": [
+        "align",
+        "dropCapCharsCount",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "par": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "line": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "formatting": {
+        "min": 6,
+        "max": 6,
+        "avg": 6.0
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 260916,
+    "total_words": 52183,
+    "examples": {
+      "formatting": [
+        "K anst ilul i o ns-Utsk o t telt Memorial, N:<> 23.",
+        "(lanter i fästningarne, Ofverstar för Eegementerne, Se.kund-eheferne för Gardes-",
+        "regementerne till häst och fot och för Lif-regementcts korpser samt Cheferne"
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]",
+    "parse_error": ""
+  },
+  {
+    "file": "bih_1856-58_4-1-4__02.xml",
+    "size_bytes": 3309312,
+    "root_tag": "document",
+    "namespace": "http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml",
+    "tag_counts": {
+      "formatting": 11639,
+      "line": 11638,
+      "rect": 7108,
+      "par": 6403,
+      "text": 2943,
+      "block": 2438,
+      "region": 2438,
+      "cell": 1649,
+      "separator": 1107,
+      "start": 1107,
+      "end": 1107,
+      "elemId": 763,
+      "stream": 347,
+      "page": 292,
+      "row": 275,
+      "section": 92,
+      "mainText": 81,
+      "document": 1,
+      "documentData": 1,
+      "sections": 1
+    },
+    "tag_attrs": {
+      "document": [
+        "languages",
+        "pagesCount",
+        "producer",
+        "schemaLocation",
+        "version"
+      ],
+      "stream": [
+        "beginPage",
+        "endPage",
+        "role"
+      ],
+      "mainText": [
+        "columnCount"
+      ],
+      "elemId": [
+        "id"
+      ],
+      "page": [
+        "height",
+        "resolution",
+        "width"
+      ],
+      "block": [
+        "b",
+        "blockType",
+        "l",
+        "pageElemId",
+        "r",
+        "t"
+      ],
+      "rect": [
+        "b",
+        "l",
+        "r",
+        "t"
+      ],
+      "text": [
+        "id",
+        "orientation"
+      ],
+      "par": [
+        "align",
+        "hasOverflowedHead",
+        "hasOverflowedTail",
+        "leftIndent",
+        "lineSpacing",
+        "rightIndent",
+        "startIndent"
+      ],
+      "line": [
+        "b",
+        "baseline",
+        "l",
+        "r",
+        "t"
+      ],
+      "formatting": [
+        "lang"
+      ],
+      "separator": [
+        "thickness",
+        "type"
+      ],
+      "start": [
+        "x",
+        "y"
+      ],
+      "end": [
+        "x",
+        "y"
+      ],
+      "cell": [
+        "bottomBorder",
+        "colSpan",
+        "height",
+        "leftBorder",
+        "rightBorder",
+        "rowSpan",
+        "topBorder",
+        "width"
+      ]
+    },
+    "tag_depths": {
+      "document": {
+        "min": 0,
+        "max": 0,
+        "avg": 0.0
+      },
+      "documentData": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "sections": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "section": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "stream": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "mainText": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "elemId": {
+        "min": 5,
+        "max": 5,
+        "avg": 5.0
+      },
+      "page": {
+        "min": 1,
+        "max": 1,
+        "avg": 1.0
+      },
+      "block": {
+        "min": 2,
+        "max": 2,
+        "avg": 2.0
+      },
+      "region": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "rect": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "text": {
+        "min": 3,
+        "max": 5,
+        "avg": 4.1
+      },
+      "par": {
+        "min": 4,
+        "max": 6,
+        "avg": 4.5
+      },
+      "line": {
+        "min": 5,
+        "max": 7,
+        "avg": 5.3
+      },
+      "formatting": {
+        "min": 6,
+        "max": 8,
+        "avg": 6.3
+      },
+      "separator": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "start": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "end": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      },
+      "row": {
+        "min": 3,
+        "max": 3,
+        "avg": 3.0
+      },
+      "cell": {
+        "min": 4,
+        "max": 4,
+        "avg": 4.0
+      }
+    },
+    "text_tags": [
+      "formatting"
+    ],
+    "total_chars": 584242,
+    "total_words": 116848,
+    "examples": {
+      "formatting": [
+        "Slals-Ulskottels Memorial M 263.",
+        "som till liqvid förfallit, erläggas Fem procent årlig ränta intilldess detsamma varder",
+        "vederbörligen inbetaldt."
+      ]
+    },
+    "tree_sample": "<document>  [@version @producer @pagesCount @languages @schemaLocation]\n  <documentData>\n    <sections>\n      <section>\n        <stream>  [@role @beginPage @endPage]\n          <mainText>  [@columnCount]\n          <elemId>  [@id]\n  <page>  [@width @height @resolution]\n    <block>  [@blockType @pageElemId @l @t @r @b]\n      <region>\n        <rect>  [@l @t @r @b]\n      <text>  [@id]\n        <par>  [@leftIndent]\n          <line>  [@baseline @l @t @r @b]\n            <formatting>  [@lang]\n      <separator>  [@type @thickness]\n        <start>  [@x @y]\n        <end>  [@x @y]\n      <row>\n        <cell>  [@leftBorder @topBorder @rightBorder @bottomBorder @width @height]\n          <text>  [@id]\n            <par>  [@leftIndent]",
+    "parse_error": ""
+  }
+]

@@ -1,0 +1,18 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Nedladdade råfiler — genereras av 02_download_xml.py
+xml_raw/
+pdf_raw/
+
+# Byggfiler och mellanresultat — genereras automatiskt
+metadata_urls.json
+volumes_progress.json
+download_log.json
+debug_index.html
+
+# Checkas IN (värdefulla artefakter):
+# volumes.json, volumes.csv       — volymförteckning
+# xml_structure_report.md         — XML-strukturanalys

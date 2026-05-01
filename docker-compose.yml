@@ -1,0 +1,30 @@
+# Docker Compose för PostgreSQL + pgvector
+#
+# Konfiguration hämtas från .env-filen i samma katalog (kopiera config.example.env → .env).
+# Docker Compose läser .env automatiskt och substituerar ${VARIABEL} nedan.
+#
+# Starta:       docker compose up -d
+# Stoppa:       docker compose down
+# Radera data:  docker compose down -v
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: riksdagstryck_db
+    environment:
+      POSTGRES_DB:       ${PGDATABASE}
+      POSTGRES_USER:     ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+    ports:
+      - "${PGPORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER} -d ${PGDATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
