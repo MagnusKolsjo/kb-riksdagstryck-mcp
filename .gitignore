@@ -16,3 +16,4 @@ debug_index.html
 # Checkas IN (värdefulla artefakter):
 # volumes.json, volumes.csv       — volymförteckning
 # xml_structure_report.md         — XML-strukturanalys
+.DS_Store

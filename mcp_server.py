@@ -5,7 +5,7 @@
 """
 mcp_server.py — MCP-server för KB:s riksdagstryck 1521–1866
 
-Exponerar tre verktyg till Claude Desktop:
+Exponerar tre verktyg till MCP-kompatibla AI-verktyg:
   kb_search       — hybridsökning (fulltextsökning + semantisk sökning)
   kb_get_volume   — metadata och utdrag för en specifik volym
   kb_list_volumes — lista indexerade volymer
@@ -15,19 +15,17 @@ Krav:
   - Konfiguration via .env (se config.example.env)
   - Installerade beroenden: pip install -r requirements.txt
 
-Kör direkt:
-  python3 mcp_server.py
+Transport-lägen (styrs via MCP_TRANSPORT i .env):
 
-Registrera i Claude Desktop (claude_desktop_config.json):
-  {
-    "mcpServers": {
-      "kb-riksdagstryck": {
-        "command": "/absolut/sökväg/till/.venv/bin/python3",
-        "args": ["/absolut/sökväg/till/mcp_server.py"],
-        "cwd": "/absolut/sökväg/till/stream-02-kb-riksdagstryck"
-      }
-    }
-  }
+  stdio (standard, lokal användning):
+    python3 mcp_server.py
+    MCP-klienten startar och hanterar processen direkt.
+
+  http (hostad driftsättning):
+    MCP_TRANSPORT=http python3 mcp_server.py
+    Servern lyssnar på MCP_HOST:MCP_PORT (standard 127.0.0.1:8000).
+    Sätt MCP_API_KEY för Bearer-token-autentisering.
+    I produktion: lägg en reverse proxy (t.ex. Nginx) framför servern.
 """
 
 import os
@@ -49,6 +47,12 @@ PGDATABASE      = os.getenv("PGDATABASE", "riksdagstryck")
 PGUSER          = os.getenv("PGUSER",     "")
 PGPASSWORD      = os.getenv("PGPASSWORD", "")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "KBLab/sentence-bert-swedish-cased")
+
+# Transport och autentisering
+MCP_TRANSPORT = os.getenv("MCP_TRANSPORT", "stdio").lower()
+MCP_HOST      = os.getenv("MCP_HOST",      "127.0.0.1")
+MCP_PORT      = int(os.getenv("MCP_PORT",  "8000"))
+MCP_API_KEY   = os.getenv("MCP_API_KEY",   "")
 
 # Viktning: fulltextsökning vs. semantisk sökning (summa = 1.0)
 FTS_WEIGHT = 0.35
@@ -456,7 +460,75 @@ def kb_list_volumes(
     return "\n".join(lines)
 
 
+# ── HTTP-autentisering ────────────────────────────────────────────────────────
+
+def _make_auth_app(asgi_app, api_key: str):
+    """
+    Wrap en ASGI-app med enkel Bearer-token-autentisering.
+    Alla anrop utan korrekt Authorization-header avvisas med HTTP 401.
+    """
+    from starlette.applications import Starlette
+    from starlette.middleware import Middleware
+    from starlette.middleware.base import BaseHTTPMiddleware
+    from starlette.responses import PlainTextResponse
+    from starlette.routing import Mount
+
+    class ApiKeyMiddleware(BaseHTTPMiddleware):
+        async def dispatch(self, request, call_next):
+            token = (
+                request.headers.get("Authorization", "")
+                .removeprefix("Bearer ")
+                .strip()
+            )
+            if token != api_key:
+                return PlainTextResponse(
+                    "Obehörig: ogiltig eller saknad API-nyckel.", status_code=401
+                )
+            return await call_next(request)
+
+    return Starlette(
+        routes=[Mount("/", app=asgi_app)],
+        middleware=[Middleware(ApiKeyMiddleware)],
+    )
+
+
 # ── Startpunkt ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    mcp.run()
+    if MCP_TRANSPORT == "http":
+        import uvicorn
+
+        # Preladda embedding-modellen vid uppstart så att första sökanropet
+        # svarar lika snabbt som alla efterföljande. Misslyckas modellen att
+        # laddas syns det direkt i loggarna — inte vid det första användaranropet.
+        log.info("Preladdar embedding-modell...")
+        get_encoder()
+        log.info("Embedding-modell redo")
+
+        # Hämta ASGI-appen från FastMCP
+        try:
+            asgi_app = mcp.streamable_http_app()
+        except AttributeError:
+            # Äldre version av mcp-biblioteket
+            log.warning(
+                "mcp.streamable_http_app() saknas — försöker med sse_app(). "
+                "Uppgradera mcp-paketet om problem uppstår."
+            )
+            asgi_app = mcp.sse_app()
+
+        if MCP_API_KEY:
+            log.info("API-nyckelautentisering aktiverad")
+            app = _make_auth_app(asgi_app, MCP_API_KEY)
+        else:
+            log.warning(
+                "MCP_API_KEY är inte satt — servern körs utan autentisering. "
+                "Bind enbart till loopback (MCP_HOST=127.0.0.1) eller "
+                "skydda via reverse proxy."
+            )
+            app = asgi_app
+
+        log.info("Startar HTTP-transport på %s:%s", MCP_HOST, MCP_PORT)
+        uvicorn.run(app, host=MCP_HOST, port=MCP_PORT, log_level="info")
+    else:
+        log.info("Startar stdio-transport (lokal användning)")
+        mcp.run()

@@ -1,8 +1,7 @@
 # Äldre riksdagstryck från KB (1521–1866) — MCP-server
 
 Lokal sökbar databas över ståndsriksdagens handlingar 1521–1866, baserad på
-Kungliga bibliotekets digitaliserade XML-material. Exponeras som MCP-server
-till Claude Desktop.
+Kungliga bibliotekets digitaliserade XML-material. Exponeras som MCP-server till MCP-kompatibla AI-verktyg.
 
 ---
 
@@ -96,16 +95,19 @@ vektorembeddings med `KBLab/sentence-bert-swedish-cased` och fyller databasen.
 Modellen är tränad specifikt för semantisk likhet och körs lokalt utan API-nyckel.
 Detta är det mest tidskrävande steget — räkna med flera timmar.
 
-### Steg 5: Konfigurera Claude Desktop och starta MCP-servern
-Konfigurera Claude Desktop (se nedan) och starta om programmet. MCP-servern
-startas automatiskt av Claude Desktop och ansluter till PostgreSQL på
-`localhost:5432`.
+### Steg 5: Starta MCP-servern
+Starta servern och anslut din MCP-klient (se konfigurationsavsnittet nedan).
+Servern ansluter till PostgreSQL på `localhost:5432`.
 
 ---
 
-## Claude Desktop-konfiguration
+## Konfiguration i MCP-klient
 
-Lägg till följande i `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Servern stöder två transportlägen: **stdio** (standard, för lokal användning) och **http** (för hostad driftsättning).
+
+### Lokalt via stdio
+
+Exempel med Claude Desktop — lägg till i `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ```json
 {
@@ -119,7 +121,44 @@ Lägg till följande i `~/Library/Application Support/Claude/claude_desktop_conf
 ```
 
 > Se till att PostgreSQL-containern körs (`docker compose up -d`) innan
-> Claude Desktop startas.
+> MCP-klienten startas.
+
+Andra MCP-kompatibla AI-verktyg konfigureras på motsvarande sätt — konsultera
+deras dokumentation för hur MCP-servrar registreras.
+### Hostad driftsättning via HTTP
+
+Sätt `MCP_TRANSPORT=http` i `.env` för att starta servern med HTTP-transport:
+
+```bash
+MCP_TRANSPORT=http python3 mcp_server.py
+```
+
+Servern lyssnar på `MCP_HOST:MCP_PORT` (standard `127.0.0.1:8000`). I
+produktion läggs en reverse proxy (t.ex. Nginx) framför och hanterar TLS.
+
+**API-nyckel**
+
+Generera en nyckel och sätt den i `.env` på servern:
+
+```bash
+python3 -c "import secrets; print(secrets.token_hex(32))"
+```
+
+Nyckeln checkas aldrig in i repot. Distribuera den separat till de användare
+som ska ansluta till din instans — till exempel via din webbplats eller på annat
+lämpligt sätt. Användare skickar nyckeln i varje anrop som HTTP-header:
+
+```
+Authorization: Bearer <din-nyckel>
+```
+
+Lämnas `MCP_API_KEY` tom körs servern utan autentisering — lämpligt enbart om
+reverse proxyn hanterar åtkomststyrning externt.
+
+**Konfiguration i MCP-klienten**
+
+Hur en fjärr-MCP-server läggs till varierar mellan klienter — konsultera din
+klients dokumentation. Du behöver serverns URL och API-nyckeln.
 
 ---
 

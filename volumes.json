@@ -1235,19 +1235,6 @@
     "ar_till": 1747
   },
   {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/42/22614142.html",
-    "titel": "Prästeståndets riksdagsprotokoll 12, 1746-1747, på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Nina Sjöberg",
-    "period": "1746-1747",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/pr_1746-1747/pr_1746-1747.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1746,
-    "ar_till": 1747
-  },
-  {
     "metadata_url": "https://weburn.kb.se/riks/metadata/70/21799270.html",
     "titel": "Sveriges ridderskaps och adels riksdagsprotokoll från och med år 1719. D. 15, 22 september 1746-april 1747",
     "period": "1746-1747",
@@ -1326,19 +1313,6 @@
     "ar_till": 1752
   },
   {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/55/22614155.html",
-    "titel": "Prästeståndets riksdagsprotokoll 13, 1751-1752, på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Nina Sjöberg",
-    "period": "1751-1752",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/pr_1751-1752/pr_1751-1752.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1751,
-    "ar_till": 1752
-  },
-  {
     "metadata_url": "https://weburn.kb.se/riks/metadata/75/21799275.html",
     "titel": "Sveriges ridderskaps och adels riksdagsprotokoll från och med år 1719. D. 18, 1751-1752",
     "period": "1751-1752",
@@ -1363,45 +1337,6 @@
     "stand": "riksdagsbeslut",
     "ar_fran": 1752,
     "ar_till": 1752
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/74/22614174.html",
-    "titel": "Borgarståndets riksdagsprotokoll på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Nina Sjöberg. 11, 1755-1756. D. 1-2",
-    "period": "1755-1756",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bg_1755-1756_01/bg_1755-1756_01.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1755,
-    "ar_till": 1756
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/62/22614162.html",
-    "titel": "Prästeståndets riksdagsprotokoll 14, 1755-1756. D. 1, på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Nina Sjöberg",
-    "period": "1755-1756",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/pr_1755-1756_01/pr_1755-1756_01.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1755,
-    "ar_till": 1756
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/67/22614167.html",
-    "titel": "Prästeståndets riksdagsprotokoll 14, 1755-1756. D. 2, på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Nina Sjöberg",
-    "period": "1755-1756",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/pr_1755-1756_02/pr_1755-1756_02.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1755,
-    "ar_till": 1756
   },
   {
     "metadata_url": "https://weburn.kb.se/riks/metadata/77/21799277.html",
@@ -1452,71 +1387,6 @@
     "extra_titel": "Om riksdagstrycket",
     "fel": "",
     "stand": "bonder",
-    "ar_fran": 1760,
-    "ar_till": 1762
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/zh/7kb9z1mt58jm2bzh.html",
-    "titel": "Borgarståndets riksdagsprotokoll. 12 1760-1762 Del 1. 15 oktober 1760-9 juli 1761 / på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Olof Holm.",
-    "period": "1760-1762",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bg_1760-1762/bg_1760-1762_1.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1760,
-    "ar_till": 1762
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/9c/cpgf5pjf9c3vpf9c.html",
-    "titel": "Borgarståndets riksdagsprotokoll. 12 1760-1762 Del 2 10 juli 1761-1 mars 1762 / på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Olof Holm.",
-    "period": "1760-1762",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bg_1760-1762/bg_1760-1762_2.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1760,
-    "ar_till": 1762
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/wn/6j9817tq4g8n5lwn.html",
-    "titel": "Borgarståndets riksdagsprotokoll. 12 1760-1762 Del 3. 6 mars-13 juli 1762, bilagor, register / på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Olof Holm.",
-    "period": "1760-1762",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bg_1760-1762/bg_1760-1762_3.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1760,
-    "ar_till": 1762
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/6t/3f650nwl1nt54h6t.html",
-    "titel": "Prästeståndets riksdagsprotokoll. 15, 1760-1762, Del 1, 16 oktober 1760-25 september 1761. på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Olof Holm.",
-    "period": "1760-1762",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/pr_1760-1762/pr_1760-1762_1.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1760,
-    "ar_till": 1762
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/dn/z922w1mswcz8r7dn.html",
-    "titel": "Prästeståndets riksdagsprotokoll. 15, 1760-1762, Del 2, 30 september 1761-22 juni 1762, bilagor, register. på Riksdagens uppdrag utgivna av Riksdagsförvaltningen genom Olof Holm.",
-    "period": "1760-1762",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/pr_1760-1762/pr_1760-1762_2.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
     "ar_fran": 1760,
     "ar_till": 1762
   },
@@ -1595,58 +1465,6 @@
     "extra_titel": "Om riksdagstrycket",
     "fel": "",
     "stand": "bonder",
-    "ar_fran": 1765,
-    "ar_till": 1766
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/rf/rc0gsbfxptl27wrf.html",
-    "titel": "Borgarståndets riksdagsprotokoll. 13, 1765-1766, Del 1: 15 januari 1765-27 januari 1766",
-    "period": "1765-1766",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bg_1765-1766/bg_1765-1766_1.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1765,
-    "ar_till": 1766
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/6j/qbzfsxc7nnknxc6j.html",
-    "titel": "Borgarståndets riksdagsprotokoll. 13, 1765-1766, Del 2: 1 februari-16 oktober 1766, bilagor, register",
-    "period": "1765-1766",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bg_1765-1766/bg_1765-1766_2.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1765,
-    "ar_till": 1766
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/pw/t8dk42trr9zw57pw.html",
-    "titel": "Prästeståndets riksdagsprotokoll. 16, 1765-1766,  2 bilagor, register, 3 april-17 oktober 1766",
-    "period": "1765-1766",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/pr_1765-1766/pr_1765-1766_2.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1765,
-    "ar_till": 1766
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/3p/t8dk392sr27tpd3p.html",
-    "titel": "Prästeståndets riksdagsprotokoll. 16, 1765-1766, 1: 16 januari 1765-26 mars 1766",
-    "period": "1765-1766",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/pr_1765-1766/pr_1765-1766_1.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
     "ar_fran": 1765,
     "ar_till": 1766
   },
@@ -8203,19 +8021,6 @@
     "ar_till": 1840
   },
   {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/wb/3jg66vvd16t4ntwb.html",
-    "titel": "Bihang till samtlige riks-ståndens protocoll vid lagtima riksdagen i Stockholm åren 1840 och 1841. Sjunde samlingen. 2dra afdelningen. Lag- samt allm. besv. och oeconomie -utskottens gemensamma memorial, utlåntanden och betänkanden",
-    "period": "1840",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bih_1840-41_7-1_2_/bih_1840-41_7_2.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
-    "ar_fran": 1840,
-    "ar_till": 1840
-  },
-  {
     "metadata_url": "https://weburn.kb.se/riks/metadata/19/21798319.html",
     "titel": "Bihang till samtlige riks-ståndens protocoll vid lagtima riksdagen i Stockholm åren 1840 och 1841. Tionde samlingen. 1sta afdelningen. Expeditions-utskottets förslag till R:s St:s underdåniga skrifvelser till Kongl. Maj:t m. m. jemte riksdags-beslutet. 1sta bandet",
     "period": "1840",
@@ -10136,19 +9941,6 @@
     "extra_titel": "Om riksdagstrycket",
     "fel": "",
     "stand": "bihang",
-    "ar_fran": 1847,
-    "ar_till": 1847
-  },
-  {
-    "metadata_url": "https://weburn.kb.se/riks/metadata/44/21798444.html",
-    "titel": "Bihang till samtlige riks-ståndens protocoll vid lagtima riksdagen i Stockholm åren 1847 och 1848. Sjunde samlingen. 2dra afdelningen: Lag- samt allmänna besvärs- och oeconomie-utskottens gemensamma memorial, utlåtanden och betänkanden",
-    "period": "1847",
-    "xml_url": "",
-    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bih_1847-48_7-2_/bih_1847-48_7_2.pdf",
-    "volym_id": "",
-    "extra_titel": "Om riksdagstrycket",
-    "fel": "ingen-xml-hittad",
-    "stand": "okant",
     "ar_fran": 1847,
     "ar_till": 1847
   },
@@ -15442,5 +15234,145 @@
     "stand": "adel",
     "ar_fran": 1865,
     "ar_till": 1865
+  },
+  {
+    "volym_id": "pr_1746-1747",
+    "titel": "Prästeståndets riksdagsprotokoll 12, 1746-1747",
+    "ar_fran": 1746,
+    "ar_till": 1747,
+    "stand": "prast",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "pr_1751-1752",
+    "titel": "Prästeståndets riksdagsprotokoll 13, 1751-1752",
+    "ar_fran": 1751,
+    "ar_till": 1752,
+    "stand": "prast",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "pr_1755-1756_01",
+    "titel": "Prästeståndets riksdagsprotokoll 14, 1755-1756. D. 1",
+    "ar_fran": 1755,
+    "ar_till": 1756,
+    "stand": "prast",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "pr_1755-1756_02",
+    "titel": "Prästeståndets riksdagsprotokoll 14, 1755-1756. D. 2",
+    "ar_fran": 1755,
+    "ar_till": 1756,
+    "stand": "prast",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "pr_1760-1762_1",
+    "titel": "Prästeståndets riksdagsprotokoll 15, 1760-1762. Del 1",
+    "ar_fran": 1760,
+    "ar_till": 1762,
+    "stand": "prast",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "pr_1760-1762_2",
+    "titel": "Prästeståndets riksdagsprotokoll 15, 1760-1762. Del 2",
+    "ar_fran": 1760,
+    "ar_till": 1762,
+    "stand": "prast",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "pr_1765-1766_1",
+    "titel": "Prästeståndets riksdagsprotokoll 16, 1765-1766. Del 1",
+    "ar_fran": 1765,
+    "ar_till": 1766,
+    "stand": "prast",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "pr_1765-1766_2",
+    "titel": "Prästeståndets riksdagsprotokoll 16, 1765-1766. Del 2 (bilagor, register)",
+    "ar_fran": 1765,
+    "ar_till": 1766,
+    "stand": "prast",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "bg_1755-1756_01",
+    "titel": "Borgarståndets riksdagsprotokoll 1755-1756",
+    "ar_fran": 1755,
+    "ar_till": 1756,
+    "stand": "borgare",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "bg_1760-1762_1",
+    "titel": "Borgarståndets riksdagsprotokoll 1760-1762. Del 1",
+    "ar_fran": 1760,
+    "ar_till": 1762,
+    "stand": "borgare",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "bg_1760-1762_2",
+    "titel": "Borgarståndets riksdagsprotokoll 1760-1762. Del 2",
+    "ar_fran": 1760,
+    "ar_till": 1762,
+    "stand": "borgare",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "bg_1760-1762_3",
+    "titel": "Borgarståndets riksdagsprotokoll 1760-1762. Del 3",
+    "ar_fran": 1760,
+    "ar_till": 1762,
+    "stand": "borgare",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "bg_1765-1766_1",
+    "titel": "Borgarståndets riksdagsprotokoll 1765-1766. Del 1",
+    "ar_fran": 1765,
+    "ar_till": 1766,
+    "stand": "borgare",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
+  },
+  {
+    "volym_id": "bg_1765-1766_2",
+    "titel": "Borgarståndets riksdagsprotokoll 1765-1766. Del 2",
+    "ar_fran": 1765,
+    "ar_till": 1766,
+    "stand": "borgare",
+    "xml_url": "",
+    "pdf_url": "",
+    "pdf_only": false
   }
 ]
