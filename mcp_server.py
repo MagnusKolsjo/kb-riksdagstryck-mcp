@@ -287,9 +287,9 @@ def kb_search(
     """
 
     full_params = (
-        [fts_query] + params + [fts_query]   # fts_hits CTE
-        + params + [vec_literal, vec_literal]  # vec_hits CTE
-        + [vec_literal, vec_literal, limit]    # SELECT + LIMIT
+        [fts_query] + params + [fts_query]              # fts_hits CTE: ts_rank, WHERE-filter, AND-fts
+        + [vec_literal] + params + [vec_literal]         # vec_hits CTE: embedding <=> i SELECT, WHERE-filter, embedding <=> i ORDER BY
+        + [vec_literal, vec_literal, limit]              # SELECT: embedding <=> i COALESCE×2, LIMIT
     )
 
     conn = get_conn()

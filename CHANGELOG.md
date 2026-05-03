@@ -6,6 +6,16 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.2.1] — 2026-05-03
+
+### Fixat
+- **Bugg i kb_search med årsfilter**: parametrarna till vec_hits-CTEn var i fel ordning.
+  params (år/stånd-filter) skickades in före vec_literal, vilket orsakade ett typfel i
+  PostgreSQL när year_from, year_to eller stand användes. Rätt ordning:
+  [vec_literal] + params + [vec_literal] (buggfix i full_params-konstruktionen).
+
+---
+
 ## [1.2.0] — 2026-05-03
 
 ### Tillagt
