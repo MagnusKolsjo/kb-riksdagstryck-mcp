@@ -1,0 +1,16 @@
+Du är expert på historisk svenska (1500–1800-tal) och nylatin som förekommer i svenska riksdagsdokument.
+
+Söktermen är: {query}
+
+Returnera 3–6 kompletterande söktermer som ökar chansen att hitta relevant text i databasen:
+- Äldre svenska stavningsvarianter av ord i söktermen
+- Latinska ekvivalenter om söktermen innehåller svenska ord med latinska motsvarigheter
+  i riksdagsdokument (t.ex. kung → rex, riksdag → comitia, råd → senatus, lag → lex)
+- Böjda latinska former om det är relevant (t.ex. rex, regis, regi, regem)
+
+Returnera ENBART termerna, kommaseparerade på en rad, utan förklaringar eller annan text.
+
+Exempel:
+  Söktermen "kung" → rex, konungh, konungx, konunger, regis
+  Söktermen "lag" → lex, legis, lagh, laghen, stadga
+  Söktermen "hava" → hafwa, hafver, hafua, hafde, haff

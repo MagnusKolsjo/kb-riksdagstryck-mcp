@@ -10,26 +10,22 @@ Exponerar tre verktyg till MCP-kompatibla AI-verktyg:
   kb_get_volume   — metadata och utdrag för en specifik volym
   kb_list_volumes — lista indexerade volymer
 
-Krav:
-  - PostgreSQL med pgvector-extension (kör: docker compose up -d)
-  - Konfiguration via .env (se config.example.env)
-  - Installerade beroenden: pip install -r requirements.txt
-
 Transport-lägen (styrs via MCP_TRANSPORT i .env):
+  stdio (standard): MCP-klienten startar och hanterar processen direkt.
+  http:             Servern lyssnar på MCP_HOST:MCP_PORT. Sätt MCP_API_KEY
+                    för Bearer-token-autentisering. I produktion: lägg en
+                    reverse proxy (t.ex. Nginx) framför servern.
 
-  stdio (standard, lokal användning):
-    python3 mcp_server.py
-    MCP-klienten startar och hanterar processen direkt.
-
-  http (hostad driftsättning):
-    MCP_TRANSPORT=http python3 mcp_server.py
-    Servern lyssnar på MCP_HOST:MCP_PORT (standard 127.0.0.1:8000).
-    Sätt MCP_API_KEY för Bearer-token-autentisering.
-    I produktion: lägg en reverse proxy (t.ex. Nginx) framför servern.
+Query-expansion (valfritt, styrs via QUERY_EXPANSION_ENABLED i .env):
+  Utökar söktermen med historiska stavningsvarianter och latinska ekvivalenter
+  via ett valfritt externt LLM-anrop. Stöder alla OpenAI-kompatibla endpoints
+  (t.ex. Claude, OpenAI, Ollama, LM Studio). Prompten i prompts/expansion_prompt.txt
+  kan anpassas fritt — se README för detaljer.
 """
 
 import os
 import logging
+from pathlib import Path
 from typing import Optional
 
 import psycopg2
@@ -41,11 +37,9 @@ load_dotenv()
 
 # ── Konfiguration ─────────────────────────────────────────────────────────────
 
-PGHOST          = os.getenv("PGHOST",     "localhost")
-PGPORT          = int(os.getenv("PGPORT", "5432"))
-PGDATABASE      = os.getenv("PGDATABASE", "riksdagstryck")
-PGUSER          = os.getenv("PGUSER",     "")
-PGPASSWORD      = os.getenv("PGPASSWORD", "")
+# Databasanslutning via en enda DATABASE_URL.
+# Format: postgresql://anvandare:losenord@localhost:5432/riksdag
+DATABASE_URL    = os.getenv("DATABASE_URL", "")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "KBLab/sentence-bert-swedish-cased")
 
 # Transport och autentisering
@@ -53,6 +47,16 @@ MCP_TRANSPORT = os.getenv("MCP_TRANSPORT", "stdio").lower()
 MCP_HOST      = os.getenv("MCP_HOST",      "127.0.0.1")
 MCP_PORT      = int(os.getenv("MCP_PORT",  "8000"))
 MCP_API_KEY   = os.getenv("MCP_API_KEY",   "")
+
+# Query-expansion (valfritt)
+QUERY_EXPANSION_ENABLED     = os.getenv("QUERY_EXPANSION_ENABLED", "false").lower() == "true"
+QUERY_EXPANSION_BASE_URL    = os.getenv("QUERY_EXPANSION_BASE_URL",  "")
+QUERY_EXPANSION_API_KEY     = os.getenv("QUERY_EXPANSION_API_KEY",   "")
+QUERY_EXPANSION_MODEL       = os.getenv("QUERY_EXPANSION_MODEL",     "")
+QUERY_EXPANSION_PROMPT_FILE = os.getenv(
+    "QUERY_EXPANSION_PROMPT_FILE",
+    str(Path(__file__).parent / "prompts" / "expansion_prompt.txt"),
+)
 
 # Viktning: fulltextsökning vs. semantisk sökning (summa = 1.0)
 FTS_WEIGHT = 0.35
@@ -72,15 +76,11 @@ _conn: Optional[psycopg2.extensions.connection] = None
 
 
 def get_encoder():
-    """
-    Ladda SentenceTransformer-modellen (en gång per process).
-    Väljer automatiskt MPS, CUDA eller CPU.
-    """
+    """Ladda SentenceTransformer-modellen (en gång per process)."""
     global _encoder
     if _encoder is None:
         import torch
         from sentence_transformers import SentenceTransformer
-
         if torch.backends.mps.is_available():
             device = "mps"
         elif torch.cuda.is_available():
@@ -96,19 +96,21 @@ def get_encoder():
 def get_conn() -> psycopg2.extensions.connection:
     """
     Returnera en öppen databasanslutning. Återansluter automatiskt vid
-    stängd eller bruten anslutning.
+    stängd eller bruten anslutning. Säkerställer att schemat finns.
     """
     global _conn
     if _conn is None or _conn.closed:
-        _conn = psycopg2.connect(
-            host=PGHOST, port=PGPORT,
-            dbname=PGDATABASE, user=PGUSER, password=PGPASSWORD,
-        )
+        if not DATABASE_URL:
+            raise ValueError(
+                "DATABASE_URL är inte satt i .env. "
+                "Exempel: postgresql://anvandare:losenord@localhost:5432/riksdag"
+            )
+        _conn = psycopg2.connect(DATABASE_URL)
         _conn.autocommit = True
-        log.info(
-            "Ansluten till PostgreSQL (%s@%s:%s/%s)",
-            PGUSER, PGHOST, PGPORT, PGDATABASE,
-        )
+        # Säkerställ att schemat finns (idempotent)
+        with _conn.cursor() as cur:
+            cur.execute("CREATE SCHEMA IF NOT EXISTS kb_riksdagstryck")
+        log.info("Ansluten till PostgreSQL via DATABASE_URL")
     return _conn
 
 
@@ -125,6 +127,56 @@ def embed_query(query: str) -> list:
 def vec_to_pg(vec: list) -> str:
     """Konvertera en Python-lista till PostgreSQL vector-literal."""
     return "[" + ",".join(f"{v:.8f}" for v in vec) + "]"
+
+
+# ── Query-expansion ───────────────────────────────────────────────────────────
+
+def expandera_fraga(query: str) -> list:
+    """
+    Expandera söktermen med historiska stavningsvarianter och latinska ekvivalenter.
+
+    Returnerar en lista med kompletterande söktermer, eller tom lista om
+    query-expansion är inaktiverat eller misslyckas.
+
+    Aktiveras via QUERY_EXPANSION_ENABLED=true i .env. Stöder alla
+    OpenAI-kompatibla endpoints — sätt QUERY_EXPANSION_BASE_URL,
+    QUERY_EXPANSION_API_KEY och QUERY_EXPANSION_MODEL för din leverantör.
+
+    Promptfilen (prompts/expansion_prompt.txt) kan redigeras fritt för att
+    anpassa expansionen till specifikt material eller tidsperiod.
+    """
+    if not QUERY_EXPANSION_ENABLED:
+        return []
+
+    prompt_path = Path(QUERY_EXPANSION_PROMPT_FILE)
+    if not prompt_path.exists():
+        log.warning("Promptfil för query-expansion saknas: %s", prompt_path)
+        return []
+
+    try:
+        from openai import OpenAI
+
+        prompt_template = prompt_path.read_text(encoding="utf-8")
+        prompt = prompt_template.format(query=query)
+
+        client = OpenAI(
+            base_url=QUERY_EXPANSION_BASE_URL or None,
+            api_key=QUERY_EXPANSION_API_KEY or "placeholder",
+        )
+        response = client.chat.completions.create(
+            model=QUERY_EXPANSION_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=120,
+            temperature=0.1,
+        )
+        raw   = response.choices[0].message.content.strip()
+        terms = [t.strip() for t in raw.split(",") if t.strip()]
+        log.info("Query-expansion: %r → %s", query, terms)
+        return terms[:8]  # Begränsa till 8 extra termer
+
+    except Exception as exc:
+        log.warning("Query-expansion misslyckades (fortsätter utan): %s", exc)
+        return []
 
 
 # ── MCP-server ─────────────────────────────────────────────────────────────────
@@ -156,11 +208,16 @@ def kb_search(
       limit     — max antal resultat, 1–20 (standard: 5)
 
     Returnerar de bäst matchande textutdragen med källa och poäng.
+    Textutdragen visas alltid i originalets stavning.
     """
     limit = min(max(1, limit), 20)
 
+    # Expandera söktermen med historiska varianter om aktiverat
+    extra_terms = expandera_fraga(query)
+    fts_query   = (query + " " + " ".join(extra_terms)).strip() if extra_terms else query
+
     # Generera embedding och bygg vector-literal
-    query_vec = embed_query(query)
+    query_vec   = embed_query(query)   # embedden baseras alltid på originaltermen
     vec_literal = vec_to_pg(query_vec)
 
     # Bygg WHERE-villkor för valfria filter
@@ -183,12 +240,11 @@ def kb_search(
     #   Fas 1: hämta de 100 bästa FTS-träffarna och de 100 bästa vektor-träffarna.
     #          GIN-indexet används för FTS, HNSW-indexet för vektorsökning.
     #   Fas 2: slå ihop kandidaterna, beräkna kombinerat poäng, returnera topp limit.
-
     sql = f"""
         WITH fts_hits AS (
             SELECT c.id,
                    ts_rank(c.fts_vector, plainto_tsquery('swedish', %s)) AS fts_score
-            FROM riksdag_chunks c
+            FROM kb_riksdagstryck.riksdag_chunks c
             {where}
               AND c.fts_vector @@ plainto_tsquery('swedish', %s)
             ORDER BY fts_score DESC
@@ -197,7 +253,7 @@ def kb_search(
         vec_hits AS (
             SELECT c.id,
                    1 - (c.embedding <=> %s::vector) AS vec_score
-            FROM riksdag_chunks c
+            FROM kb_riksdagstryck.riksdag_chunks c
             {where}
             ORDER BY c.embedding <=> %s::vector
             LIMIT 100
@@ -222,7 +278,7 @@ def kb_search(
             COALESCE(f.fts_score, 0) * {FTS_WEIGHT}
               + COALESCE(v.vec_score, 1 - (c.embedding <=> %s::vector)) * {VEC_WEIGHT}
                                                                            AS combined_score
-        FROM riksdag_chunks c
+        FROM kb_riksdagstryck.riksdag_chunks c
         JOIN candidates        ON c.id = candidates.id
         LEFT JOIN fts_hits f   ON c.id = f.id
         LEFT JOIN vec_hits v   ON c.id = v.id
@@ -230,21 +286,10 @@ def kb_search(
         LIMIT %s
     """
 
-    # Params-ordning matchar platshållarna i SQL ovan:
-    #   fts_hits CTE:  plainto_tsquery ×2, WHERE-filter
-    #   vec_hits CTE:  WHERE-filter, vec ×2
-    #   SELECT:        vec ×2 (fallback i COALESCE)
-    #   LIMIT:         limit
     full_params = (
-        [query]          # fts_hits: plainto_tsquery arg 1
-        + params         # fts_hits: WHERE-filter
-        + [query]        # fts_hits: plainto_tsquery arg 2 (i AND-villkoret)
-        + params         # vec_hits: WHERE-filter
-        + [vec_literal]  # vec_hits: <=> i SELECT
-        + [vec_literal]  # vec_hits: ORDER BY
-        + [vec_literal]  # SELECT: vec_score COALESCE-fallback
-        + [vec_literal]  # SELECT: combined_score COALESCE-fallback
-        + [limit]
+        [fts_query] + params + [fts_query]   # fts_hits CTE
+        + params + [vec_literal, vec_literal]  # vec_hits CTE
+        + [vec_literal, vec_literal, limit]    # SELECT + LIMIT
     )
 
     conn = get_conn()
@@ -274,11 +319,7 @@ def kb_search(
     parts = [f"Sökte: {query!r}{filter_desc} — {len(rows)} resultat\n"]
 
     for i, row in enumerate(rows, 1):
-        ar = (
-            f"{row['ar_fran']}–{row['ar_till']}"
-            if row["ar_fran"]
-            else "okänt år"
-        )
+        ar = (f"{row['ar_fran']}–{row['ar_till']}" if row["ar_fran"] else "okänt år")
         pdf_mark = " [PDF-källa]" if row["pdf_only"] else ""
         parts.append(
             f"━━━ Resultat {i} ━━━\n"
@@ -304,13 +345,14 @@ def kb_get_volume(volym_id: str) -> str:
                  (använd kb_list_volumes för att se tillgängliga ID:n)
 
     Returnerar titel, år, stånd, antal chunks och ett utdrag ur första chunken.
+    Utdraget visas i originalets stavning.
     """
     conn = get_conn()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            # Indexeringsstatus och chunk-antal
             cur.execute(
-                "SELECT chunk_count, indexed_at FROM indexed_volumes WHERE volym_id = %s",
+                "SELECT chunk_count, indexed_at "
+                "FROM kb_riksdagstryck.indexed_volumes WHERE volym_id = %s",
                 (volym_id,),
             )
             vol_row = cur.fetchone()
@@ -321,27 +363,17 @@ def kb_get_volume(volym_id: str) -> str:
                     "Använd kb_list_volumes() för att se tillgängliga volymer."
                 )
 
-            # Metadata från första chunken (titel, år, stånd, URL)
             cur.execute(
-                """
-                SELECT titel, ar_fran, ar_till, stand, xml_url, pdf_only
-                FROM riksdag_chunks
-                WHERE volym_id = %s
-                LIMIT 1
-                """,
+                """SELECT titel, ar_fran, ar_till, stand, xml_url, pdf_only
+                FROM kb_riksdagstryck.riksdag_chunks
+                WHERE volym_id = %s LIMIT 1""",
                 (volym_id,),
             )
             meta = cur.fetchone()
 
-            # Första chunken som textutdrag
             cur.execute(
-                """
-                SELECT chunk_text
-                FROM riksdag_chunks
-                WHERE volym_id = %s
-                ORDER BY chunk_index
-                LIMIT 1
-                """,
+                """SELECT chunk_text FROM kb_riksdagstryck.riksdag_chunks
+                WHERE volym_id = %s ORDER BY chunk_index LIMIT 1""",
                 (volym_id,),
             )
             first = cur.fetchone()
@@ -350,12 +382,8 @@ def kb_get_volume(volym_id: str) -> str:
         log.error("kb_get_volume SQL-fel: %s", exc)
         return f"Databasfel: {exc}"
 
-    ar = (
-        f"{meta['ar_fran']}–{meta['ar_till']}"
-        if meta and meta["ar_fran"]
-        else "okänt"
-    )
-    pdf_mark = " (konverterad från PDF)" if meta and meta["pdf_only"] else ""
+    ar = (f"{meta['ar_fran']}–{meta['ar_till']}" if meta and meta["ar_fran"] else "okänt")
+    pdf_mark   = " (konverterad från PDF)" if meta and meta["pdf_only"] else ""
     indexed_at = vol_row["indexed_at"].strftime("%Y-%m-%d %H:%M")
 
     lines = [
@@ -367,10 +395,8 @@ def kb_get_volume(volym_id: str) -> str:
         f"Chunks:     {vol_row['chunk_count']}",
         f"Indexerad:  {indexed_at}",
     ]
-
     if first:
         lines.append(f"\nFörsta chunken:\n{first['chunk_text'][:800]}")
-
     return "\n".join(lines)
 
 
@@ -415,7 +441,7 @@ def kb_list_volumes(
             MAX(stand)          AS stand,
             COUNT(*)            AS chunks,
             BOOL_OR(pdf_only)   AS pdf_only
-        FROM riksdag_chunks
+        FROM kb_riksdagstryck.riksdag_chunks
         {where}
         GROUP BY volym_id
         ORDER BY MIN(ar_fran) NULLS LAST, volym_id
@@ -440,33 +466,22 @@ def kb_list_volumes(
         filter_desc += f" | Stånd: {stand}"
 
     lines = [f"{len(rows)} volymer{filter_desc}:\n"]
-
     for row in rows:
-        ar = (
-            f"{row['ar_fran']}–{row['ar_till']}"
-            if row["ar_fran"]
-            else "okänt"
-        )
+        ar       = (f"{row['ar_fran']}–{row['ar_till']}" if row["ar_fran"] else "okänt")
         pdf_mark = " [PDF]" if row["pdf_only"] else ""
         titel_str = f"  {row['titel']}" if row["titel"] else ""
         lines.append(
             f"{row['volym_id']}{pdf_mark}"
-            f"  |  {ar}"
-            f"  |  {row['stand'] or '?'}"
-            f"  |  {row['chunks']} chunks"
+            f"  |  {ar}  |  {row['stand'] or '?'}  |  {row['chunks']} chunks"
             f"{titel_str}"
         )
-
     return "\n".join(lines)
 
 
 # ── HTTP-autentisering ────────────────────────────────────────────────────────
 
 def _make_auth_app(asgi_app, api_key: str):
-    """
-    Wrap en ASGI-app med enkel Bearer-token-autentisering.
-    Alla anrop utan korrekt Authorization-header avvisas med HTTP 401.
-    """
+    """Wrap en ASGI-app med Bearer-token-autentisering."""
     from starlette.applications import Starlette
     from starlette.middleware import Middleware
     from starlette.middleware.base import BaseHTTPMiddleware
@@ -498,22 +513,14 @@ if __name__ == "__main__":
     if MCP_TRANSPORT == "http":
         import uvicorn
 
-        # Preladda embedding-modellen vid uppstart så att första sökanropet
-        # svarar lika snabbt som alla efterföljande. Misslyckas modellen att
-        # laddas syns det direkt i loggarna — inte vid det första användaranropet.
         log.info("Preladdar embedding-modell...")
         get_encoder()
         log.info("Embedding-modell redo")
 
-        # Hämta ASGI-appen från FastMCP
         try:
             asgi_app = mcp.streamable_http_app()
         except AttributeError:
-            # Äldre version av mcp-biblioteket
-            log.warning(
-                "mcp.streamable_http_app() saknas — försöker med sse_app(). "
-                "Uppgradera mcp-paketet om problem uppstår."
-            )
+            log.warning("mcp.streamable_http_app() saknas — försöker med sse_app()")
             asgi_app = mcp.sse_app()
 
         if MCP_API_KEY:

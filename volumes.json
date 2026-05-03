@@ -15374,5 +15374,33 @@
     "xml_url": "",
     "pdf_url": "",
     "pdf_only": false
+  },
+  {
+    "metadata_url": "",
+    "titel": "Bihang till samtlige riks-ståndens protocoll vid lagtima riksdagen i Stockholm åren 1840 och 1841. Sjunde samlingen. 2dra afdelningen",
+    "period": "1840",
+    "xml_url": "",
+    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bih_1840-41_7_2/bih_1840-41_7_2.pdf",
+    "volym_id": "bih_1840-41_7_2",
+    "extra_titel": "",
+    "fel": "",
+    "stand": "bihang",
+    "ar_fran": 1840,
+    "ar_till": 1841,
+    "pdf_only": true
+  },
+  {
+    "metadata_url": "",
+    "titel": "Bihang till samtlige riks-ståndens protocoll vid lagtima riksdagen i Stockholm åren 1847 och 1848. Sjunde samlingen. 2dra afdelningen",
+    "period": "1847",
+    "xml_url": "",
+    "pdf_url": "https://weburn.kb.se/riks/ståndsriksdagen/pdf/bih_1847-48_7_2/bih_1847-48_7_2.pdf",
+    "volym_id": "bih_1847-48_7_2",
+    "extra_titel": "",
+    "fel": "",
+    "stand": "bihang",
+    "ar_fran": 1847,
+    "ar_till": 1848,
+    "pdf_only": true
   }
 ]

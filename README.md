@@ -1,7 +1,8 @@
 # Äldre riksdagstryck från KB (1521–1866) — MCP-server
 
 Lokal sökbar databas över ståndsriksdagens handlingar 1521–1866, baserad på
-Kungliga bibliotekets digitaliserade XML-material. Exponeras som MCP-server till MCP-kompatibla AI-verktyg.
+Kungliga bibliotekets digitaliserade XML-material. Exponeras som MCP-server till
+MCP-kompatibla AI-verktyg.
 
 ---
 
@@ -24,7 +25,7 @@ riksdagsbeslut och bihang (bilagor). Totalt 1 188 volymer är kartlagda.
 
 **16 volymer** från perioden 1746–1847 (frihetstiden, Gustav III:s revolution 1772,
 mordet på Gustav III 1792, förlusten av Finland 1809) finns enbart som PDF.
-Dessa konverteras till kompatibelt XML av `05_pdf_to_xml.py`.
+Dessa konverteras till kompatibelt XML av `04_pdf_to_xml.py`.
 
 ---
 
@@ -51,7 +52,7 @@ pip install -r requirements.txt
 
 # 3. Konfigurera miljövariabler
 cp config.example.env .env
-# Öppna .env och byt ut lösenordet — använd samma värde som i docker-compose.yml
+# Öppna .env och fyll i DATABASE_URL med ditt eget användarnamn och lösenord
 
 # 4. Starta PostgreSQL + pgvector
 docker compose up -d
@@ -80,34 +81,55 @@ Tar ~30–60 minuter. Stöder återupptagning om det avbryts.
 
 ### Steg 3: Konvertera PDF-filer till XML
 ```bash
-python3 05_pdf_to_xml.py
+python3 04_pdf_to_xml.py
 ```
 Extraherar text ur de 16 PDF-only volymerna (1746–1847) och sparar dem i
-`xml_raw/` med ABBYY FineReader 10-kompatibelt format — samma schema som
-KB:s egna XML-filer.
+`pdf_raw/` med ABBYY FineReader 10-kompatibelt format.
 
 ### Steg 4: Indexera i PostgreSQL
 ```bash
-python3 04_parse_and_index.py
+python3 05_parse_and_index.py --reset
 ```
-Parsar alla XML-filer, delar upp texten i sökbara chunks, genererar
+Parsar alla XML-filer, delar upp texten i sökbara chunks (~600 ord), genererar
 vektorembeddings med `KBLab/sentence-bert-swedish-cased` och fyller databasen.
-Modellen är tränad specifikt för semantisk likhet och körs lokalt utan API-nyckel.
+Normaliserar samtidigt stavningen för FTS-indexet — se avsnittet om sökning nedan.
 Detta är det mest tidskrävande steget — räkna med flera timmar.
+
+Använd `--force --volym <id>` för att tvinga omindexering av en enskild volym
+(t.ex. om metadata korrigerats i `volumes.json`):
+
+```bash
+python3 05_parse_and_index.py --force --volym bih_1840-41_7_2
+```
 
 ### Steg 5: Starta MCP-servern
 Starta servern och anslut din MCP-klient (se konfigurationsavsnittet nedan).
-Servern ansluter till PostgreSQL på `localhost:5432`.
 
 ---
 
-## Konfiguration i MCP-klient
+## Konfiguration
 
-Servern stöder två transportlägen: **stdio** (standard, för lokal användning) och **http** (för hostad driftsättning).
+Alla inställningar hanteras via `.env` (kopiera `config.example.env` och fyll i egna värden).
 
-### Lokalt via stdio
+### Databasanslutning
 
-Exempel med Claude Desktop — lägg till i `~/Library/Application Support/Claude/claude_desktop_config.json`:
+En enda `DATABASE_URL` konfigurerar anslutningen:
+
+```env
+DATABASE_URL=postgresql://mitt_db_anvandare:losenord@localhost:5432/riksdag
+```
+
+`docker-compose.yml` läser `POSTGRES_USER`, `POSTGRES_PASSWORD` och `POSTGRES_DB`
+och skapar användaren automatiskt vid första start. Se `config.example.env` för
+fullständigt exempel.
+
+### Konfiguration i MCP-klient
+
+Servern stöder två transportlägen: **stdio** (standard) och **http** (hostad driftsättning).
+
+#### Lokalt via stdio
+
+Exempel med Claude Desktop — lägg till i `claude_desktop_config.json`:
 
 ```json
 {
@@ -120,45 +142,77 @@ Exempel med Claude Desktop — lägg till i `~/Library/Application Support/Claud
 }
 ```
 
-> Se till att PostgreSQL-containern körs (`docker compose up -d`) innan
-> MCP-klienten startas.
+Andra MCP-kompatibla AI-verktyg konfigureras på motsvarande sätt — se deras dokumentation.
 
-Andra MCP-kompatibla AI-verktyg konfigureras på motsvarande sätt — konsultera
-deras dokumentation för hur MCP-servrar registreras.
-### Hostad driftsättning via HTTP
+> Se till att PostgreSQL-containern körs (`docker compose up -d`) innan MCP-klienten startas.
 
-Sätt `MCP_TRANSPORT=http` i `.env` för att starta servern med HTTP-transport:
+#### Hostad driftsättning via HTTP
+
+Sätt `MCP_TRANSPORT=http` i `.env`:
 
 ```bash
 MCP_TRANSPORT=http python3 mcp_server.py
 ```
 
-Servern lyssnar på `MCP_HOST:MCP_PORT` (standard `127.0.0.1:8000`). I
-produktion läggs en reverse proxy (t.ex. Nginx) framför och hanterar TLS.
+Servern lyssnar på `MCP_HOST:MCP_PORT` (standard `127.0.0.1:8000`). I produktion
+läggs en reverse proxy (t.ex. Nginx) framför och hanterar TLS.
 
-**API-nyckel**
-
-Generera en nyckel och sätt den i `.env` på servern:
+**API-nyckel:** generera och sätt i `.env`:
 
 ```bash
 python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-Nyckeln checkas aldrig in i repot. Distribuera den separat till de användare
-som ska ansluta till din instans — till exempel via din webbplats eller på annat
-lämpligt sätt. Användare skickar nyckeln i varje anrop som HTTP-header:
+Nyckeln checkas aldrig in i repot. Distribuera den separat till användare.
+Klienter skickar den som `Authorization: Bearer <nyckel>`.
 
+---
+
+## Sökning och textåtergivning
+
+Sökningen kombinerar PostgreSQL:s inbyggda svenska stemming (GIN-index) med
+semantisk vektorsökning (HNSW-index, `KBLab/sentence-bert-swedish-cased`).
+"Riksdag", "riksdagen" och "riksdagens" matchar samma sökterm.
+
+### Historisk stavning
+
+Texten i databasen är skriven i historisk svenska (1521–1866) med stavningsvarianter
+som `hafwa`, `vtan`, `wid`, `then`, `thet`. En nutida användare som söker på moderna
+former som "hava", "utan", "vid", "den", "det" hittar ändå rätt tack vare att
+indexet byggs på normaliserad text.
+
+**Originaltexten bevaras alltid orörd.** Sökresultaten visar texten precis som den
+är skriven i källmaterialet — normaliseringen påverkar enbart sökindexet, inte det
+som visas. Om du vill citera ur handlingarna får du alltså originaltexten.
+
+### Query-expansion för latin och historiska synonymer (valfritt)
+
+Handlingar från 1500–1600-talen innehåller latinska passager. Aktivera
+query-expansion i `.env` för att låta ett LLM automatiskt föreslå latinska
+ekvivalenter och fler historiska varianter:
+
+```env
+QUERY_EXPANSION_ENABLED=true
+QUERY_EXPANSION_BASE_URL=https://api.anthropic.com/v1   # eller annan leverantör
+QUERY_EXPANSION_API_KEY=din-nyckel
+QUERY_EXPANSION_MODEL=claude-haiku-4-5-20251001
 ```
-Authorization: Bearer <din-nyckel>
-```
 
-Lämnas `MCP_API_KEY` tom körs servern utan autentisering — lämpligt enbart om
-reverse proxyn hanterar åtkomststyrning externt.
+Alla OpenAI-kompatibla endpoints stöds: Claude, OpenAI, Ollama (`http://localhost:11434/v1`),
+LM Studio (`http://localhost:1234/v1`) m.fl. Lämna `QUERY_EXPANSION_BASE_URL` tomt
+för standard OpenAI-endpoint.
 
-**Konfiguration i MCP-klienten**
+### Promptfilen — anpassa eller bygg en skill
 
-Hur en fjärr-MCP-server läggs till varierar mellan klienter — konsultera din
-klients dokumentation. Du behöver serverns URL och API-nyckeln.
+Filen `prompts/expansion_prompt.txt` styr vad LLM:et ombeds göra. Den kan redigeras
+fritt för att anpassa expansionen till ett specifikt material, en tidsperiod eller
+ett ämnesdömän.
+
+Promptfilen kan också användas som underlag för en **återanvändbar MCP-skill**: klistar
+du in innehållet i en skill-definition kan vilken MCP-klient som helst anropa
+query-expansion utan att servern behöver hålla koll på LLM-konfigurationen. Det
+möjliggör t.ex. att olika användare av samma server använder olika LLM-backends för
+sin expansion.
 
 ---
 
@@ -166,37 +220,38 @@ klients dokumentation. Du behöver serverns URL och API-nyckeln.
 
 | Verktyg | Parametrar | Beskrivning |
 |---|---|---|
-| `kb_search` | `query`, `year_from`, `year_to`, `stand`, `limit` | Hybridsökning (fulltext + semantisk, viktad 35/65). Returnerar de bäst matchande textutdragen med poäng och källhänvisning. |
-| `kb_get_volume` | `volym_id` | Metadata och utdrag ur första chunken för en specifik volym. |
-| `kb_list_volumes` | `year_from`, `year_to`, `stand` | Lista indexerade volymer, filtrerbart på år och stånd. |
-
-Sökningen kombinerar PostgreSQL:s inbyggda svenska stemming (GIN-index) med
-semantisk vektorsökning (HNSW-index, `KBLab/sentence-bert-swedish-cased`).
-"Riksdag", "riksdagen" och "riksdagens" matchar samma sökterm.
+| `kb_search` | `query`, `year_from`, `year_to`, `stand`, `limit` | Hybridsökning (fulltext + semantisk, viktad 35/65). Returnerar textutdrag i originalets stavning. |
+| `kb_get_volume` | `volym_id` | Metadata och utdrag ur första chunken. Originalstavning. |
+| `kb_list_volumes` | `year_from`, `year_to`, `stand` | Filtrerbar volymförteckning. |
 
 ---
 
 ## Databasstruktur
 
+Tabellerna placeras i schemat `kb_riksdagstryck` för att inte krocka med övriga
+arbetsströmmar i samma PostgreSQL-databas.
+
 ```sql
--- Startas automatiskt av 04_parse_and_index.py
+CREATE SCHEMA IF NOT EXISTS kb_riksdagstryck;
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
-CREATE TABLE riksdag_chunks (
-    id          BIGSERIAL PRIMARY KEY,
-    chunk_text  TEXT        NOT NULL,
-    volym_id    TEXT        NOT NULL,
-    titel       TEXT,
-    ar_fran     INTEGER,
-    ar_till     INTEGER,
-    stand       TEXT,
-    chunk_index INTEGER,
-    xml_url     TEXT,
-    pdf_only    BOOLEAN DEFAULT FALSE,
-    embedding   vector(768),
-    fts_vector  tsvector GENERATED ALWAYS AS
-                    (to_tsvector('swedish', chunk_text)) STORED
+CREATE TABLE kb_riksdagstryck.riksdag_chunks (
+    id                    BIGSERIAL PRIMARY KEY,
+    chunk_text            TEXT NOT NULL,         -- originaltext, aldrig modifierad
+    chunk_text_normalized TEXT,                  -- normaliserad stavning för FTS
+    volym_id              TEXT NOT NULL,
+    titel                 TEXT,
+    ar_fran               INTEGER,
+    ar_till               INTEGER,
+    stand                 TEXT,
+    chunk_index           INTEGER,
+    xml_url               TEXT,
+    pdf_only              BOOLEAN DEFAULT FALSE,
+    embedding             vector(768),
+    fts_vector            tsvector GENERATED ALWAYS AS
+                          (to_tsvector('swedish',
+                              COALESCE(chunk_text_normalized, chunk_text))) STORED
 );
 ```
 
