@@ -6,6 +6,49 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.0.0] — 2026-05-06
+
+### Brytande ändringar — databas och MCP-svarsformat
+
+**Databas-rename i schemat `kb_riksdagstryck`** — kräver migration via
+`db/migration_v2_0_0.sql`. Skriptet är idempotent.
+
+Tabeller:
+- `indexed_volumes` → `indexerade_volymer`
+
+Kolumner i `kb_riksdagstryck.indexerade_volymer`:
+- `chunk_count` → `chunk_antal`
+- `indexed_at` → `indexerad_vid`
+
+**Tre nya kolumner** i `kb_riksdagstryck.riksdag_chunks` (alla NULL-default,
+existerande chunks påverkas inte):
+- `char_start INTEGER` — chunkens första teckenposition i volymens fulltext
+- `char_end INTEGER` — chunkens sista teckenposition
+- `web_dok_id INTEGER` — pekare till motsvarande dokument i en framtida
+  webbplats-tabell (riksdagstryck_web-schema, byggs i ström 7). Inget
+  FK-constraint i denna release.
+
+`char_start` / `char_end` populeras vid framtida (re-)indexering med
+uppdaterad chunknings-pipeline. Befintliga chunks behåller NULL.
+
+**MCP-svarsformat — `kb_search`:**
+- Borttag av raden `Chunk: N` (implementationsdetalj utan värde för användaren)
+- Borttag av raden `Poäng: X.X (FTS: Y.Y, Semantisk: Z.Z)` (intern för rankning)
+- Påverkar parsade svar — klienter som tolkade specifika rader behöver uppdateras
+
+**Python-identifierare** — 2 unika identifierare med å/ä/ö → ASCII-svenska:
+- `mönster` → `monster`
+- `ersättning` → `ersattning`
+
+(Båda i lokal `_NORM_REGLER`-loop i `05_parse_and_index.py`.)
+
+### Tekniskt
+
+- Ny `db/migration_v2_0_0.sql` med PL/pgSQL-helperfunktioner
+  `pg_temp.byt_tabell`, `pg_temp.byt_kolumn` och `pg_temp.lagg_till_kolumn`.
+
+---
+
 ## [1.2.1] — 2026-05-03
 
 ### Fixat

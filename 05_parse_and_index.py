@@ -197,8 +197,8 @@ def normalisera_stavning(text: str) -> str:
     behöver ändras.
     """
     t = text.lower()
-    for mönster, ersättning in _NORM_REGLER:
-        t = mönster.sub(ersättning, t)
+    for monster, ersattning in _NORM_REGLER:
+        t = monster.sub(ersattning, t)
     return t
 
 
@@ -223,6 +223,9 @@ SCHEMA_STATEMENTS = [
         chunk_index           INTEGER,
         xml_url               TEXT,
         pdf_only              BOOLEAN     DEFAULT FALSE,
+        char_start            INTEGER,
+        char_end              INTEGER,
+        web_dok_id            INTEGER,
         embedding             vector(768),
         fts_vector            tsvector GENERATED ALWAYS AS
                               (to_tsvector('swedish',
@@ -230,10 +233,10 @@ SCHEMA_STATEMENTS = [
     )
     """,
     """
-    CREATE TABLE IF NOT EXISTS kb_riksdagstryck.indexed_volumes (
+    CREATE TABLE IF NOT EXISTS kb_riksdagstryck.indexerade_volymer (
         volym_id      TEXT PRIMARY KEY,
-        chunk_count   INTEGER,
-        indexed_at    TIMESTAMP DEFAULT NOW()
+        chunk_antal   INTEGER,
+        indexerad_vid    TIMESTAMP DEFAULT NOW()
     )
     """,
 ]
@@ -284,22 +287,22 @@ def already_indexed(conn, volym_id: str) -> bool:
     """Returnera True om volymen redan är indexerad."""
     with conn.cursor() as cur:
         cur.execute(
-            "SELECT 1 FROM kb_riksdagstryck.indexed_volumes WHERE volym_id = %s",
+            "SELECT 1 FROM kb_riksdagstryck.indexerade_volymer WHERE volym_id = %s",
             (volym_id,)
         )
         return cur.fetchone() is not None
 
 
-def mark_indexed(conn, volym_id: str, chunk_count: int):
+def mark_indexed(conn, volym_id: str, chunk_antal: int):
     """Registrera att volymen är klar."""
     with conn.cursor() as cur:
         cur.execute(
-            """INSERT INTO kb_riksdagstryck.indexed_volumes (volym_id, chunk_count)
+            """INSERT INTO kb_riksdagstryck.indexerade_volymer (volym_id, chunk_antal)
                VALUES (%s, %s)
                ON CONFLICT (volym_id) DO UPDATE
-               SET chunk_count = EXCLUDED.chunk_count,
-                   indexed_at  = NOW()""",
-            (volym_id, chunk_count)
+               SET chunk_antal = EXCLUDED.chunk_antal,
+                   indexerad_vid  = NOW()""",
+            (volym_id, chunk_antal)
         )
     conn.commit()
 
@@ -309,7 +312,7 @@ def reset_database(conn):
     with conn.cursor() as cur:
         cur.execute(
             "TRUNCATE kb_riksdagstryck.riksdag_chunks, "
-            "kb_riksdagstryck.indexed_volumes RESTART IDENTITY CASCADE"
+            "kb_riksdagstryck.indexerade_volymer RESTART IDENTITY CASCADE"
         )
     conn.commit()
     log.warning("Databasen tömd — all data raderad")
@@ -327,7 +330,7 @@ def delete_volume(conn, volym_id: str) -> int:
         )
         deleted = cur.rowcount
         cur.execute(
-            "DELETE FROM kb_riksdagstryck.indexed_volumes WHERE volym_id = %s",
+            "DELETE FROM kb_riksdagstryck.indexerade_volymer WHERE volym_id = %s",
             (volym_id,)
         )
     conn.commit()

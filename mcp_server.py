@@ -325,9 +325,7 @@ def kb_search(
             f"━━━ Resultat {i} ━━━\n"
             f"Volym:  {row['volym_id']}{pdf_mark}\n"
             f"Titel:  {row['titel'] or '–'}\n"
-            f"År:     {ar}  |  Stånd: {row['stand'] or '–'}  |  Chunk: {row['chunk_index']}\n"
-            f"Poäng:  {row['combined_score']:.3f}  "
-            f"(FTS: {row['fts_score']:.3f}, Semantisk: {row['vec_score']:.3f})\n"
+            f"År:     {ar}  |  Stånd: {row['stand'] or '–'}\n"
             f"URL:    {row['xml_url'] or '–'}\n"
             f"\n{row['utdrag']}\n"
         )
@@ -351,8 +349,8 @@ def kb_get_volume(volym_id: str) -> str:
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(
-                "SELECT chunk_count, indexed_at "
-                "FROM kb_riksdagstryck.indexed_volumes WHERE volym_id = %s",
+                "SELECT chunk_antal, indexerad_vid "
+                "FROM kb_riksdagstryck.indexerade_volymer WHERE volym_id = %s",
                 (volym_id,),
             )
             vol_row = cur.fetchone()
@@ -384,7 +382,7 @@ def kb_get_volume(volym_id: str) -> str:
 
     ar = (f"{meta['ar_fran']}–{meta['ar_till']}" if meta and meta["ar_fran"] else "okänt")
     pdf_mark   = " (konverterad från PDF)" if meta and meta["pdf_only"] else ""
-    indexed_at = vol_row["indexed_at"].strftime("%Y-%m-%d %H:%M")
+    indexerad_vid = vol_row["indexerad_vid"].strftime("%Y-%m-%d %H:%M")
 
     lines = [
         f"Volym:      {volym_id}{pdf_mark}",
@@ -392,8 +390,8 @@ def kb_get_volume(volym_id: str) -> str:
         f"År:         {ar}",
         f"Stånd:      {meta['stand'] if meta else '–'}",
         f"URL:        {meta['xml_url'] if meta else '–'}",
-        f"Chunks:     {vol_row['chunk_count']}",
-        f"Indexerad:  {indexed_at}",
+        f"Chunks:     {vol_row['chunk_antal']}",
+        f"Indexerad:  {indexerad_vid}",
     ]
     if first:
         lines.append(f"\nFörsta chunken:\n{first['chunk_text'][:800]}")
