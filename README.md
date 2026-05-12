@@ -27,6 +27,12 @@ riksdagsbeslut och bihang (bilagor). Totalt 1 188 volymer är kartlagda.
 mordet på Gustav III 1792, förlusten av Finland 1809) finns enbart som PDF.
 Dessa konverteras till kompatibelt XML av `04_pdf_to_xml.py`.
 
+> **Känd begränsning — borgarståndet 1765–1766:** KB:s digitalisering av dessa volymer
+> (Del 1 och Del 2) finns inte i XML-form. KB bekräftar på sina metadatasidor:
+> *"Text i XML finns inte för denna volym."* Volymerna är indexerade via extraktion
+> ur KB:s sökbara PDF och källänkarna pekar på PDF-filen. Bondeståndets protokoll
+> från samma riksdag (`bn_1765-1766___04`) finns i KB-native XML och är fullt sökbar.
+
 ---
 
 ## Krav
