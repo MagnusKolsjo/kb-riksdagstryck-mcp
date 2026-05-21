@@ -12,6 +12,22 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.0.2] — 2026-05-21
+
+### Ändrat
+
+- `mcp_server.py`: global `_conn`/`get_conn()` ersatt med per-anrops-mönstret
+  `_ar_postgres()`/`_hamta_db()`/`_ph()`/`_prefix()` för konsekvens mot övriga MCP-servrar.
+  `initiera_schema()` körs vid uppstart (idempotent, robust mot tillfälligt DB-bortfall).
+  Alla SQL-strängar använder `{_prefix()}` i stället för hårdkodat schemaprefix.
+- `05_parse_and_index.py`: `connect_db()` döpt om till `_hamta_db()`, med tillhörande
+  `_ar_postgres()`, `_ph()` och `_prefix()` för konsekvens mot övriga MCP-servrar.
+- `01_crawl_volumes.py` och `02_download_xml.py`: `PROJECT_UA`-konstant tillagd med
+  projektets korrekta UA-sträng — redo att aktivera när KB vitlistar den.
+  Befintlig Chrome-UA kvarstår som aktiv under vitlistningsperioden.
+
+---
+
 ## [2.0.1] — 2026-05-21
 
 ### Fixat

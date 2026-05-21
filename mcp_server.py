@@ -72,7 +72,6 @@ log = logging.getLogger(__name__)
 # ── Lazy-laddade resurser ─────────────────────────────────────────────────────
 
 _encoder = None
-_conn: Optional[psycopg2.extensions.connection] = None
 
 
 def get_encoder():
@@ -93,25 +92,42 @@ def get_encoder():
     return _encoder
 
 
-def get_conn() -> psycopg2.extensions.connection:
-    """
-    Returnera en öppen databasanslutning. Återansluter automatiskt vid
-    stängd eller bruten anslutning. Säkerställer att schemat finns.
-    """
-    global _conn
-    if _conn is None or _conn.closed:
-        if not DATABASE_URL:
-            raise ValueError(
-                "DATABASE_URL är inte satt i .env. "
-                "Exempel: postgresql://anvandare:losenord@localhost:5432/riksdag"
-            )
-        _conn = psycopg2.connect(DATABASE_URL)
-        _conn.autocommit = True
-        # Säkerställ att schemat finns (idempotent)
-        with _conn.cursor() as cur:
+def _ar_postgres() -> bool:
+    """Returnerar True — den här servern använder alltid PostgreSQL."""
+    return True
+
+
+def _hamta_db() -> psycopg2.extensions.connection:
+    """Öppnar en ny databasanslutning per anrop. Anroparen ansvarar för att stänga den."""
+    if not DATABASE_URL:
+        raise ValueError(
+            "DATABASE_URL är inte satt i .env. "
+            "Exempel: postgresql://anvandare:losenord@localhost:5432/riksdag"
+        )
+    return psycopg2.connect(DATABASE_URL)
+
+
+def _ph() -> str:
+    """Platshållare för parameterbindning — PostgreSQL använder %s."""
+    return "%s"
+
+
+def _prefix() -> str:
+    """Schemaprefix för tabellnamn — PostgreSQL: kb_riksdagstryck."""
+    return "kb_riksdagstryck."
+
+
+def initiera_schema() -> None:
+    """Säkerställ att schemat finns (idempotent). Robust mot tillfälligt DB-bortfall."""
+    try:
+        conn = _hamta_db()
+        with conn.cursor() as cur:
             cur.execute("CREATE SCHEMA IF NOT EXISTS kb_riksdagstryck")
-        log.info("Ansluten till PostgreSQL via DATABASE_URL")
-    return _conn
+        conn.commit()
+        conn.close()
+        log.info("Schema kb_riksdagstryck verifierat")
+    except Exception as exc:
+        log.warning("Schema-init misslyckades (servern fortsätter ändå): %s", exc)
 
 
 def embed_query(query: str) -> list:
@@ -244,7 +260,7 @@ def kb_search(
         WITH fts_hits AS (
             SELECT c.id,
                    ts_rank(c.fts_vector, plainto_tsquery('swedish', %s)) AS fts_score
-            FROM kb_riksdagstryck.riksdag_chunks c
+            FROM {_prefix()}riksdag_chunks c
             {where}
               AND c.fts_vector @@ plainto_tsquery('swedish', %s)
             ORDER BY fts_score DESC
@@ -253,7 +269,7 @@ def kb_search(
         vec_hits AS (
             SELECT c.id,
                    1 - (c.embedding <=> %s::vector) AS vec_score
-            FROM kb_riksdagstryck.riksdag_chunks c
+            FROM {_prefix()}riksdag_chunks c
             {where}
             ORDER BY c.embedding <=> %s::vector
             LIMIT 100
@@ -278,7 +294,7 @@ def kb_search(
             COALESCE(f.fts_score, 0) * {FTS_WEIGHT}
               + COALESCE(v.vec_score, 1 - (c.embedding <=> %s::vector)) * {VEC_WEIGHT}
                                                                            AS combined_score
-        FROM kb_riksdagstryck.riksdag_chunks c
+        FROM {_prefix()}riksdag_chunks c
         JOIN candidates        ON c.id = candidates.id
         LEFT JOIN fts_hits f   ON c.id = f.id
         LEFT JOIN vec_hits v   ON c.id = v.id
@@ -292,7 +308,7 @@ def kb_search(
         + [vec_literal, vec_literal, limit]              # SELECT: embedding <=> i COALESCE×2, LIMIT
     )
 
-    conn = get_conn()
+    conn = _hamta_db()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(sql, full_params)
@@ -300,6 +316,8 @@ def kb_search(
     except Exception as exc:
         log.error("kb_search SQL-fel: %s", exc)
         return f"Sökfel: {exc}"
+    finally:
+        conn.close()
 
     if not rows:
         filter_parts = []
@@ -345,12 +363,12 @@ def kb_get_volume(volym_id: str) -> str:
     Returnerar titel, år, stånd, antal chunks och ett utdrag ur första chunken.
     Utdraget visas i originalets stavning.
     """
-    conn = get_conn()
+    conn = _hamta_db()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(
-                "SELECT chunk_antal, indexerad_vid "
-                "FROM kb_riksdagstryck.indexerade_volymer WHERE volym_id = %s",
+                f"SELECT chunk_antal, indexerad_vid "
+                f"FROM {_prefix()}indexerade_volymer WHERE volym_id = %s",
                 (volym_id,),
             )
             vol_row = cur.fetchone()
@@ -362,15 +380,15 @@ def kb_get_volume(volym_id: str) -> str:
                 )
 
             cur.execute(
-                """SELECT titel, ar_fran, ar_till, stand, xml_url, pdf_only
-                FROM kb_riksdagstryck.riksdag_chunks
+                f"""SELECT titel, ar_fran, ar_till, stand, xml_url, pdf_only
+                FROM {_prefix()}riksdag_chunks
                 WHERE volym_id = %s LIMIT 1""",
                 (volym_id,),
             )
             meta = cur.fetchone()
 
             cur.execute(
-                """SELECT chunk_text FROM kb_riksdagstryck.riksdag_chunks
+                f"""SELECT chunk_text FROM {_prefix()}riksdag_chunks
                 WHERE volym_id = %s ORDER BY chunk_index LIMIT 1""",
                 (volym_id,),
             )
@@ -379,6 +397,8 @@ def kb_get_volume(volym_id: str) -> str:
     except Exception as exc:
         log.error("kb_get_volume SQL-fel: %s", exc)
         return f"Databasfel: {exc}"
+    finally:
+        conn.close()
 
     ar = (f"{meta['ar_fran']}–{meta['ar_till']}" if meta and meta["ar_fran"] else "okänt")
     pdf_mark   = " (konverterad från PDF)" if meta and meta["pdf_only"] else ""
@@ -439,13 +459,13 @@ def kb_list_volumes(
             MAX(stand)          AS stand,
             COUNT(*)            AS chunks,
             BOOL_OR(pdf_only)   AS pdf_only
-        FROM kb_riksdagstryck.riksdag_chunks
+        FROM {_prefix()}riksdag_chunks
         {where}
         GROUP BY volym_id
         ORDER BY MIN(ar_fran) NULLS LAST, volym_id
     """
 
-    conn = get_conn()
+    conn = _hamta_db()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(sql, params)
@@ -453,6 +473,8 @@ def kb_list_volumes(
     except Exception as exc:
         log.error("kb_list_volumes SQL-fel: %s", exc)
         return f"Databasfel: {exc}"
+    finally:
+        conn.close()
 
     if not rows:
         return "Inga volymer matchade filtret."
@@ -508,6 +530,7 @@ def _make_auth_app(asgi_app, api_key: str):
 # ── Startpunkt ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    initiera_schema()
     if MCP_TRANSPORT == "http":
         import uvicorn
 

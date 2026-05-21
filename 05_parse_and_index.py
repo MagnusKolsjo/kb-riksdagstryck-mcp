@@ -254,8 +254,13 @@ SCHEMA_INDEXES = [
 
 # ── Databashjälpfunktioner ────────────────────────────────────────────────────
 
-def connect_db():
-    """Anslut till PostgreSQL via DATABASE_URL och returnera connection-objekt."""
+def _ar_postgres() -> bool:
+    """Returnerar True — det här skriptet använder alltid PostgreSQL."""
+    return True
+
+
+def _hamta_db():
+    """Öppnar en ny databasanslutning. Anroparen ansvarar för att stänga den."""
     import psycopg2
     if not DATABASE_URL:
         raise ValueError(
@@ -265,6 +270,16 @@ def connect_db():
     conn = psycopg2.connect(DATABASE_URL)
     conn.autocommit = False
     return conn
+
+
+def _ph() -> str:
+    """Platshållare för parameterbindning — PostgreSQL använder %s."""
+    return "%s"
+
+
+def _prefix() -> str:
+    """Schemaprefix för tabellnamn — PostgreSQL: kb_riksdagstryck."""
+    return "kb_riksdagstryck."
 
 
 def setup_schema(conn):
@@ -663,7 +678,7 @@ def main():
 
     if not args.dry_run:
         try:
-            conn = connect_db()
+            conn = _hamta_db()
             log.info("Ansluten till PostgreSQL via DATABASE_URL")
         except Exception as exc:
             log.error("Kan inte ansluta till PostgreSQL: %s", exc)
