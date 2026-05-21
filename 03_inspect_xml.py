@@ -6,7 +6,7 @@
 03_inspect_xml.py — Analyserar KB:s XML-struktur
 
 Samplar XML-filer från varje stånd och producerar en strukturrapport som
-används som ritning för 04_parse_and_index.py och 05_pdf_to_xml.py.
+används som ritning för 05_parse_and_index.py och 04_pdf_to_xml.py.
 
 Rapporten sparas som:
   - xml_structure_report.json  — maskinläsbar strukturanalys
@@ -357,7 +357,7 @@ def main() -> int:
     write_markdown_report(analyses, md_path)
 
     log.info("\nKlar! Läs xml_structure_report.md för en sammanfattning av strukturen.")
-    log.info("Rapporten används som underlag för 04_parse_and_index.py och 05_pdf_to_xml.py.")
+    log.info("Rapporten används som underlag för 05_parse_and_index.py och 04_pdf_to_xml.py.")
     return 0
 
 

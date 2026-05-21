@@ -235,7 +235,7 @@ sin expansion.
 ## Databasstruktur
 
 Tabellerna placeras i schemat `kb_riksdagstryck` för att inte krocka med övriga
-arbetsströmmar i samma PostgreSQL-databas.
+MCP-servrar som delar samma PostgreSQL-databas.
 
 ```sql
 CREATE SCHEMA IF NOT EXISTS kb_riksdagstryck;
@@ -255,6 +255,9 @@ CREATE TABLE kb_riksdagstryck.riksdag_chunks (
     xml_url               TEXT,
     pdf_only              BOOLEAN DEFAULT FALSE,
     embedding             vector(768),
+    char_start            INTEGER,               -- chunkens första teckenposition i volymens fulltext
+    char_end              INTEGER,               -- chunkens sista teckenposition
+    web_dok_id            INTEGER,               -- pekare till ström 7 (NULL tills ström 7 är aktiv)
     fts_vector            tsvector GENERATED ALWAYS AS
                           (to_tsvector('swedish',
                               COALESCE(chunk_text_normalized, chunk_text))) STORED

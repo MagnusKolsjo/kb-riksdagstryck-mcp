@@ -3,7 +3,7 @@
 # Se LICENSE-filen i repots rot för fullständig licenstext.
 
 """
-05_pdf_to_xml.py — Konverterar KB:s PDF-volymer till ABBYY FineReader 10 XML
+04_pdf_to_xml.py — Konverterar KB:s PDF-volymer till ABBYY FineReader 10 XML
 
 KB:s 16 PDF-only volymer (1746–1847) saknar XML men är sökbara — de har
 ett OCR-textlager producerat av ABBYY FineReader, samma verktyg som
@@ -12,12 +12,12 @@ genererade XML-filerna för övriga 1 172 volymer.
 PyMuPDF extraherar text med positionsdata (bounding boxes) per sida,
 vilket vi rekonstruerar till ABBYY FineReader 10 XML med exakt samma
 schema, taggar och attribut som KB:s egna filer. Resultatet sparas i
-xml_raw/ och kan indexeras av 04_parse_and_index.py utan specialhantering.
+xml_raw/ och kan indexeras av 05_parse_and_index.py utan specialhantering.
 
 Användning:
-  python3 05_pdf_to_xml.py                    # konvertera alla PDF:er i pdf_raw/
-  python3 05_pdf_to_xml.py --file pdf_raw/pr_1746-1747.pdf  # en specifik fil
-  python3 05_pdf_to_xml.py --dry-run          # visa vad som skulle konverteras
+  python3 04_pdf_to_xml.py                    # konvertera alla PDF:er i pdf_raw/
+  python3 04_pdf_to_xml.py --file pdf_raw/pr_1746-1747.pdf  # en specifik fil
+  python3 04_pdf_to_xml.py --dry-run          # visa vad som skulle konverteras
 
 Krav:
   pip install -r requirements.txt  (inkluderar pymupdf)
@@ -282,7 +282,7 @@ def main() -> int:
 
     log.info(f"\nKlar! {ok} konverterade, {errors} fel.")
     if ok > 0:
-        log.info("XML-filerna ligger i xml_raw/ och kan indexeras av 04_parse_and_index.py")
+        log.info("XML-filerna ligger i xml_raw/ och kan indexeras av 05_parse_and_index.py")
     return 0 if errors == 0 else 2
 
 

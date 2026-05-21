@@ -17,3 +17,7 @@ debug_index.html
 # volumes.json, volumes.csv       — volymförteckning
 # xml_structure_report.md         — XML-strukturanalys
 .DS_Store
+
+# Loggar
+*.log
+logs/

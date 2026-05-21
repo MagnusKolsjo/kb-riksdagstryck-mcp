@@ -6,6 +6,27 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [Unreleased]
+
+*(Inga ändringar ännu.)*
+
+---
+
+## [2.0.1] — 2026-05-21
+
+### Fixat
+
+- `config.example.env`: "fallback" → "alternativ" för SQLite-alternativet (symmetriskt arkitekturval)
+- `README.md` och `05_parse_and_index.py`: "arbetsströmmar" → "MCP-servrar" i publika och interna texter
+- `04_pdf_to_xml.py`: gamla filnamn i docstring rättade — `05_pdf_to_xml.py` → `04_pdf_to_xml.py`,
+  `04_parse_and_index.py` → `05_parse_and_index.py` (modul-docstring, användningsexempel, log-meddelande)
+- `03_inspect_xml.py`: samma filnamnsfix (rad 9 och 360)
+- `.gitignore`: `*.log` och `logs/` tillagda
+- `CHANGELOG.md`: `[Unreleased]`-block tillagt överst
+- `README.md` (Databasstruktur): `char_start`, `char_end` och `web_dok_id` tillagda i schematabellen
+
+---
+
 ## [2.0.0] — 2026-05-06
 
 ### Brytande ändringar — databas och MCP-svarsformat

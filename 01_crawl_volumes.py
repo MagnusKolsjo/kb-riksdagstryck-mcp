@@ -47,6 +47,11 @@ INDEX_URL  = "https://riksdagstryck.kb.se/standsriksdagen.html"
 BASE_URL   = "https://riksdagstryck.kb.se"
 OUTPUT_DIR = Path(__file__).parent
 
+# OBS: KB:s weburn-WAF avvisar (HTTP 403) alla UA-strängar som identifierar sig
+# som bot — inklusive den projekt-konforma `kb-riksdagstryck-mcp/1.0 (+URL)`.
+# Tester 2026-05-19 visade att ingen `compatible`-variant fungerar. Tills KB
+# vitlistar projektets UA används browserformig UA som pragmatisk avvikelse
+# från projektets UA-konvention. Detaljer i 02-kb-riksdagstryck-1521-1866.md.
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "

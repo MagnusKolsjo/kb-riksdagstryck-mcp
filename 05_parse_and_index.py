@@ -207,7 +207,7 @@ def normalisera_stavning(text: str) -> str:
 SCHEMA_STATEMENTS = [
     "CREATE EXTENSION IF NOT EXISTS vector",
     "CREATE EXTENSION IF NOT EXISTS pg_trgm",
-    # Schemat kb_riksdagstryck isolerar tabellerna från övriga arbetsströmmar
+    # Schemat kb_riksdagstryck isolerar tabellerna från övriga MCP-servrar
     # som delar samma PostgreSQL-databas.
     "CREATE SCHEMA IF NOT EXISTS kb_riksdagstryck",
     """
