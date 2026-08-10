@@ -5,11 +5,15 @@
 """
 02_download_xml.py — Nedladdning av XML- och PDF-filer från KB
 
-Läser volumes.json (skapad av 01_crawl_volumes.py) och laddar ner:
-  - XML-filer  → xml_raw/{volym_id}.xml
-  - PDF-filer  → pdf_raw/{volym_id}.pdf  (för de 16 PDF-only volymerna)
+Läser manifest_delar.json (skapad av 01_crawl_volumes.py) och laddar ner,
+per deldokument:
+  - XML-filer  → xml_raw/{volym_id}.xml   (alla deldokument som har xml hos KB)
+  - PDF-filer  → pdf_raw/{filnamn}.pdf     (bara deldokument som saknar xml hos KB)
 
 Stöd för att fortsätta avbruten nedladdning — redan nedladdade filer hoppas över.
+Samma körning fungerar som förstagångsinstallation och som komplettering av en
+befintlig installation: kön byggs ur manifestet och allt som redan finns på disk
+hoppas över.
 Sparar en loggfil (download_log.json) med status per volym.
 
 OBS: weburn.kb.se kräver korrekt User-Agent och Referer-header — se teknisk åtkomst i README.
@@ -46,7 +50,7 @@ PDF_RAW_DIR    = Path(os.getenv("PDF_RAW_DIR", "./pdf_raw"))
 DOWNLOAD_DELAY = float(os.getenv("DOWNLOAD_DELAY", "0.5"))
 MAX_ERRORS     = int(os.getenv("MAX_ERRORS", "10"))
 OUTPUT_DIR     = Path(__file__).parent
-VOLUMES_FILE   = OUTPUT_DIR / "volumes.json"
+MANIFEST_FILE  = OUTPUT_DIR / "manifest_delar.json"
 LOG_FILE       = OUTPUT_DIR / "download_log.json"
 
 # Projektets korrekta UA-sträng per projektkonventionen.
@@ -147,44 +151,41 @@ def main() -> int:
     parser.add_argument("--dry-run",  action="store_true", help="Visa vad som skulle laddas ner")
     args = parser.parse_args()
 
-    if not VOLUMES_FILE.exists():
-        log.error(f"{VOLUMES_FILE} saknas — kör 01_crawl_volumes.py först")
+    if not MANIFEST_FILE.exists():
+        log.error(f"{MANIFEST_FILE} saknas — kör 01_crawl_volumes.py först")
         return 1
 
-    volumes = json.loads(VOLUMES_FILE.read_text(encoding="utf-8"))
+    manifest = json.loads(MANIFEST_FILE.read_text(encoding="utf-8"))
     download_log = load_log()
 
-    # Bygg nedladdningskö
+    # Bygg nedladdningskö ur deldokuments-manifestet (ett deldokument per rad).
+    # XML hämtas för varje deldokument som har en xml_url. PDF hämtas bara för
+    # deldokument som saknar xml hos KB — där är PDF:en enda källan. Deldokument
+    # som har både xml och pdf hämtas bara som xml (PDF behövs inte när texten finns).
     queue = []
 
-    if not args.pdf_only:
-        xml_vols = [v for v in volumes if v.get("xml_url") and v.get("volym_id")]
-        for v in xml_vols:
-            dest = XML_RAW_DIR / f"{v['volym_id']}.xml"
+    for d in manifest:
+        har_xml = bool(d.get("xml_url"))
+        if har_xml and not args.pdf_only:
             queue.append({
-                "volym_id": v["volym_id"],
-                "url":      v["xml_url"],
-                "dest":     dest,
+                "volym_id": d["volym_id"],
+                "url":      d["xml_url"],
+                "dest":     XML_RAW_DIR / f"{d['volym_id']}.xml",
                 "typ":      "xml",
-                "stand":    v.get("stand", ""),
-                "period":   v.get("period", ""),
-                "titel":    (v.get("extra_titel") or v.get("titel", ""))[:60],
+                "stand":    d.get("stand", ""),
+                "period":   d.get("period", ""),
+                "titel":    (d.get("titel", ""))[:60],
             })
-
-    if not args.xml_only:
-        pdf_vols = [v for v in volumes if not v.get("xml_url") and v.get("pdf_url")]
-        for v in pdf_vols:
-            fname = v["pdf_url"].split("/")[-1]
-            stem  = fname.replace(".pdf", "")
-            dest  = PDF_RAW_DIR / fname
+        elif not har_xml and d.get("pdf_url") and not args.xml_only:
+            fname = d["pdf_url"].split("/")[-1]
             queue.append({
-                "volym_id": stem,
-                "url":      v["pdf_url"],
-                "dest":     dest,
+                "volym_id": d["volym_id"],
+                "url":      d["pdf_url"],
+                "dest":     PDF_RAW_DIR / fname,
                 "typ":      "pdf",
-                "stand":    v.get("stand", ""),
-                "period":   v.get("period", ""),
-                "titel":    (v.get("extra_titel") or v.get("titel", ""))[:60],
+                "stand":    d.get("stand", ""),
+                "period":   d.get("period", ""),
+                "titel":    (d.get("titel", ""))[:60],
             })
 
     # Filtrera redan nedladdade

@@ -5,10 +5,17 @@
 """
 mcp_server.py — MCP-server för KB:s riksdagstryck 1521–1866
 
-Exponerar tre verktyg till MCP-kompatibla AI-verktyg:
+Exponerar fyra verktyg till MCP-kompatibla AI-verktyg:
   kb_search       — hybridsökning (fulltextsökning + semantisk sökning)
+  kb_get_chunk    — hela textstycket bakom en sökträff, valfritt med omgivning
   kb_get_volume   — metadata och utdrag för en specifik volym
   kb_list_volumes — lista indexerade volymer
+
+Svarsstorlek och citatgranskning:
+  Sökträffar och volymutdrag begränsas till ett teckentak (max_tecken) som alltid
+  redovisas i svaret när det slår till. Varje sökträff bär sin adress i korpusen
+  (volym_id + chunk_index), och kb_get_chunk hämtar hela textstycket bakom en
+  träff — vilket är förutsättningen för att kunna verifiera ett ordagrant citat.
 
 Transport-lägen (styrs via MCP_TRANSPORT i .env):
   stdio (standard): MCP-klienten startar och hanterar processen direkt.
@@ -61,6 +68,13 @@ QUERY_EXPANSION_PROMPT_FILE = os.getenv(
 # Viktning: fulltextsökning vs. semantisk sökning (summa = 1.0)
 FTS_WEIGHT = 0.35
 VEC_WEIGHT = 0.65
+
+# Teckentak för textutdrag. Chunkarna är ~600 ord (flera tusen tecken), så ett
+# helt oavkortat sökresultat med tjugo träffar blir stort. Taken håller svaren
+# hanterbara, medan kb_get_chunk ger hela texten när ett citat ska verifieras.
+# Sätt till 0 för att stänga av trunkeringen helt.
+MAX_TECKEN_TRAFF  = int(os.getenv("KB_MAX_TECKEN_TRAFF",  "1500"))
+MAX_TECKEN_UTDRAG = int(os.getenv("KB_MAX_TECKEN_UTDRAG", "2000"))
 
 logging.basicConfig(
     level=logging.INFO,
@@ -145,6 +159,67 @@ def vec_to_pg(vec: list) -> str:
     return "[" + ",".join(f"{v:.8f}" for v in vec) + "]"
 
 
+# ── Textutdrag och trunkering ─────────────────────────────────────────────────
+
+def _tal(n: int) -> str:
+    """
+    Formaterar ett heltal med svensk tusentalsavgränsare.
+
+    Avgränsaren är ett hårt blanksteg (U+00A0) enligt svensk skrivregel — skrivet
+    som escape-sekvens eftersom tecknet annars inte går att skilja från ett
+    vanligt mellanslag i källkoden.
+    """
+    return f"{n:,}".replace(",", "\u00a0")
+
+
+def _skar_ut(
+    text: str,
+    max_tecken: int,
+    fran_tecken: int = 0,
+    anvisning: str = "",
+) -> str:
+    """
+    Skär ut ett textutdrag och markera alltid när något har kapats.
+
+    Trunkering utan markör är den allvarligaste formen av tyst datafel — svaret
+    ser ut att vara hela innehållet. Därför avslutas ett kapat utdrag alltid med
+    en rad som anger hur mycket som visas, hur mycket som finns, och hur resten
+    hämtas.
+
+    Parametrar:
+      text        — hela texten
+      max_tecken  — teckentak; 0 eller negativt betyder ingen trunkering
+      fran_tecken — starta utdraget vid denna teckenposition (för paginering)
+      anvisning   — anropsexempel som visar hur resten hämtas
+
+    Klipper alltid på ord- eller radgräns, aldrig mitt i ett ord.
+    """
+    totalt = len(text)
+    start  = max(0, min(fran_tecken, totalt))
+    rest   = text[start:]
+
+    kapad_i_slutet = bool(max_tecken and max_tecken > 0 and len(rest) > max_tecken)
+    if kapad_i_slutet:
+        utdrag = rest[:max_tecken]
+        # Backa till närmaste ord- eller radgräns så inget ord klyvs. Om ingen
+        # gräns finns rimligt nära slutet behålls den hårda kapningen.
+        brytpunkt = max(utdrag.rfind(" "), utdrag.rfind("\n"))
+        if brytpunkt > max_tecken * 0.6:
+            utdrag = utdrag[:brytpunkt]
+        utdrag = utdrag.rstrip()
+    else:
+        utdrag = rest
+
+    if not kapad_i_slutet and start == 0:
+        return utdrag
+
+    slut = start + len(utdrag)
+    noter = [f"Visar tecken {_tal(start + 1)}–{_tal(slut)} av {_tal(totalt)}"]
+    if anvisning:
+        noter.append(anvisning)
+    return utdrag + "\n\n[" + ". ".join(noter) + "]"
+
+
 # ── Query-expansion ───────────────────────────────────────────────────────────
 
 def expandera_fraga(query: str) -> list:
@@ -197,7 +272,28 @@ def expandera_fraga(query: str) -> list:
 
 # ── MCP-server ─────────────────────────────────────────────────────────────────
 
-mcp = FastMCP("KB Riksdagstryck 1521–1866")
+mcp = FastMCP(
+    "KB Riksdagstryck 1521–1866",
+    instructions=(
+        "MCP-server för ståndsriksdagens handlingar 1521–1866 ur Kungliga "
+        "bibliotekets digitaliserade riksdagstryck. Verktygen har prefixet kb_. "
+        "RÄKNESÄTT: fältet volym_id avser ett DELDOKUMENT, inte en bibliografisk "
+        "volym. KB:s 1 188 volymer är uppdelade i 2 447 deldokument med olika "
+        "sidintervall; delarna slutar på __01, __02, __03 och så vidare. "
+        "SÖKTERMER: kb_search behandlar hela frågan som en fras — fulltextledet "
+        "kräver att samtliga ord förekommer, och kommatecken ignoreras. Ett "
+        "komma betyder alltså INTE 'eller' här, till skillnad från de nordiska "
+        "servrarna; sök en term i taget när du vill ha alternativ. "
+        "SVARSSTORLEK: sökträffar kapas vid ett teckentak som alltid redovisas i "
+        "svaret, eftersom ett textstycke är ~600 ord. "
+        "CITAT: varje träff bär sin adress (volym_id + chunk_index). Ett "
+        "ordagrant citat får aldrig bygga på ett kapat sökutdrag — hämta hela "
+        "textstycket med kb_get_chunk först, och använd kontext=1 när en mening "
+        "löper över en styckegräns. "
+        "SPRÅK: materialet är vetenskapliga editioner med 1500–1800-talssvenska "
+        "och latin. Expandera moderna termer till tidens begrepp före sökning."
+    ),
+)
 
 
 @mcp.tool()
@@ -207,6 +303,7 @@ def kb_search(
     year_to: Optional[int] = None,
     stand: Optional[str] = None,
     limit: int = 5,
+    max_tecken: int = -1,
 ) -> str:
     """
     Sök i ståndsriksdagens handlingar (1521–1866) med hybridsökning.
@@ -215,18 +312,37 @@ def kb_search(
     "riksdagen" och "riksdagens") och semantisk vektorsökning. Resultaten
     rankas efter en viktad kombination av de två poängen.
 
-    Parametrar:
-      query     — sökfras på svenska (eller latin för äldre material)
-      year_from — filtrera från och med detta år (t.ex. 1700)
-      year_to   — filtrera till och med detta år (t.ex. 1800)
-      stand     — filtrera på stånd: adel, praster, borgare, bonder,
-                  bihang, riksdagsbeslut (utelämna för alla stånd)
-      limit     — max antal resultat, 1–20 (standard: 5)
+    SÖKTERMER: hela frågan behandlas som EN fras. Fulltextledet kräver att
+    samtliga ord förekommer (AND), och kommatecken har ingen särskild betydelse —
+    de ignoreras, så "tryckfrihet, censur" söker efter poster som innehåller
+    BÅDA orden. Vill du söka det ena ELLER det andra: gör ett anrop per term.
+    Semantikledet använder alltid hela frasen som den är. Detta skiljer sig från
+    de nordiska servrarna, där komma betyder OR.
 
-    Returnerar de bäst matchande textutdragen med källa och poäng.
+    Parametrar:
+      query      — sökfras på svenska (eller latin för äldre material)
+      year_from  — filtrera från och med detta år (t.ex. 1700)
+      year_to    — filtrera till och med detta år (t.ex. 1800)
+      stand      — filtrera på stånd: adel, praster, borgare, bonder,
+                   bihang, riksdagsbeslut, samt register (sak- och
+                   personregister) och okant (KU-handlingar 1809–1815).
+                   Utelämna för alla stånd.
+      limit      — max antal resultat, 1–20 (standard: 5)
+      max_tecken — teckentak per träff (standard: KB_MAX_TECKEN_TRAFF, 1500).
+                   Sätt 0 för hela textstycket utan trunkering. Varje kapat
+                   utdrag markeras i svaret med hur mycket som visas av hur mycket.
+
+    Returnerar de bäst matchande textutdragen med källa och adress i korpusen.
     Textutdragen visas alltid i originalets stavning.
+
+    CITAT: varje träff anger sin adress (volym-ID och chunk-nummer). Innan en
+    lagtext eller ett protokollcitat återges ordagrant — hämta hela textstycket
+    med kb_get_chunk(volym_id, chunk_index). Ett sökutdrag kan vara kapat, och
+    ett citat får aldrig bygga på ett kapat utdrag.
     """
     limit = min(max(1, limit), 20)
+    if max_tecken < 0:
+        max_tecken = MAX_TECKEN_TRAFF
 
     # Expandera söktermen med historiska varianter om aktiverat
     extra_terms = expandera_fraga(query)
@@ -288,7 +404,8 @@ def kb_search(
             c.chunk_index,
             c.xml_url,
             c.pdf_only,
-            LEFT(c.chunk_text, 600)                                        AS utdrag,
+            c.chunk_text                                                   AS utdrag,
+            iv.chunk_antal,
             COALESCE(f.fts_score, 0)                                       AS fts_score,
             COALESCE(v.vec_score, 1 - (c.embedding <=> %s::vector))        AS vec_score,
             COALESCE(f.fts_score, 0) * {FTS_WEIGHT}
@@ -298,6 +415,7 @@ def kb_search(
         JOIN candidates        ON c.id = candidates.id
         LEFT JOIN fts_hits f   ON c.id = f.id
         LEFT JOIN vec_hits v   ON c.id = v.id
+        LEFT JOIN {_prefix()}indexerade_volymer iv ON iv.volym_id = c.volym_id
         ORDER BY combined_score DESC
         LIMIT %s
     """
@@ -335,34 +453,200 @@ def kb_search(
         filter_desc += f" | Stånd: {stand}"
 
     parts = [f"Sökte: {query!r}{filter_desc} — {len(rows)} resultat\n"]
+    nagot_trunkerat = False
 
     for i, row in enumerate(rows, 1):
         ar = (f"{row['ar_fran']}–{row['ar_till']}" if row["ar_fran"] else "okänt år")
         pdf_mark = " [PDF-källa]" if row["pdf_only"] else ""
+
+        chunk_index = row["chunk_index"]
+        adress = f"{chunk_index}"
+        if row["chunk_antal"]:
+            adress += f" av {row['chunk_antal']}"
+
+        anvisning = (
+            f'Hela textstycket: kb_get_chunk("{row["volym_id"]}", {chunk_index})'
+            if chunk_index is not None else ""
+        )
+        utdrag = _skar_ut(row["utdrag"] or "", max_tecken, anvisning=anvisning)
+        if len(utdrag) != len(row["utdrag"] or ""):
+            nagot_trunkerat = True
+
         parts.append(
             f"━━━ Resultat {i} ━━━\n"
             f"Volym:  {row['volym_id']}{pdf_mark}\n"
             f"Titel:  {row['titel'] or '–'}\n"
             f"År:     {ar}  |  Stånd: {row['stand'] or '–'}\n"
+            f"Chunk:  {adress}\n"
             f"URL:    {row['xml_url'] or '–'}\n"
-            f"\n{row['utdrag']}\n"
+            f"\n{utdrag}\n"
+        )
+
+    if nagot_trunkerat:
+        parts.append(
+            "Minst ett utdrag ovan är kapat. Ett ordagrant citat får aldrig bygga "
+            "på ett kapat utdrag — hämta hela textstycket med kb_get_chunk först."
         )
 
     return "\n".join(parts)
 
 
 @mcp.tool()
-def kb_get_volume(volym_id: str) -> str:
+def kb_get_chunk(
+    volym_id: str,
+    chunk_index: int,
+    kontext: int = 0,
+    max_tecken: int = 0,
+    fran_tecken: int = 0,
+) -> str:
     """
-    Hämta metadata och ett textutdrag för en specifik volym.
+    Hämta hela textstycket bakom en sökträff, valfritt med omgivande stycken.
+
+    Detta är verktyget för citatgranskning. Ett utdrag i kb_search kan vara
+    kapat vid teckentaket; här får du hela texten och kan verifiera att ett
+    citat är fullständigt och korrekt återgivet.
 
     Parametrar:
-      volym_id — volymens ID, t.ex. "rda_1521-1560___01"
-                 (använd kb_list_volumes för att se tillgängliga ID:n)
+      volym_id    — volymens ID ur en sökträff, t.ex. "rda_1521-1560___01"
+      chunk_index — textstyckets nummer ur en sökträff (fältet "Chunk")
+      kontext     — hämta även så här många stycken före och efter (standard 0).
+                    Använd 1 när en mening eller paragraf löper över en
+                    styckegräns.
+      max_tecken  — teckentak (standard 0 = hela texten utan trunkering)
+      fran_tecken — börja utdraget vid denna teckenposition, för att bläddra
+                    vidare i en text som kapats av max_tecken
 
-    Returnerar titel, år, stånd, antal chunks och ett utdrag ur första chunken.
-    Utdraget visas i originalets stavning.
+    Returnerar textstyckets fulltext i originalets stavning, med volymens
+    metadata och styckets position i volymen.
     """
+    kontext = min(max(0, kontext), 5)
+    fran = chunk_index - kontext
+    till = chunk_index + kontext
+
+    conn = _hamta_db()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute(
+                f"""SELECT c.chunk_index, c.chunk_text, c.titel, c.ar_fran,
+                           c.ar_till, c.stand, c.xml_url, c.pdf_only,
+                           c.char_start, c.char_end, iv.chunk_antal
+                    FROM {_prefix()}riksdag_chunks c
+                    LEFT JOIN {_prefix()}indexerade_volymer iv
+                           ON iv.volym_id = c.volym_id
+                    WHERE c.volym_id = %s
+                      AND c.chunk_index BETWEEN %s AND %s
+                    ORDER BY c.chunk_index""",
+                (volym_id, fran, till),
+            )
+            rader = cur.fetchall()
+    except Exception as exc:
+        log.error("kb_get_chunk SQL-fel: %s", exc)
+        return f"Databasfel: {exc}"
+    finally:
+        conn.close()
+
+    if not rader:
+        # Skilj "okänd volym" från "giltig volym, men chunk-numret finns inte" —
+        # ett felmeddelande ska visa vägen framåt, inte bara konstatera fel.
+        conn = _hamta_db()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    f"SELECT chunk_antal FROM {_prefix()}indexerade_volymer "
+                    f"WHERE volym_id = %s",
+                    (volym_id,),
+                )
+                vol = cur.fetchone()
+        except Exception:
+            vol = None
+        finally:
+            conn.close()
+
+        if not vol:
+            return (
+                f"Volymen '{volym_id}' finns inte i databasen. "
+                "Använd kb_list_volumes() för att se tillgängliga volym-ID:n."
+            )
+        return (
+            f"Volymen '{volym_id}' finns, men har inget textstycke med "
+            f"chunk_index {chunk_index}. Volymen har {vol[0]} stycken "
+            f"(numrerade från 0)."
+        )
+
+    meta = rader[0]
+    ar   = (f"{meta['ar_fran']}–{meta['ar_till']}" if meta["ar_fran"] else "okänt")
+    pdf_mark = " (konverterad från PDF)" if meta["pdf_only"] else ""
+
+    if len(rader) == 1:
+        rubrik_position = f"Chunk:      {rader[0]['chunk_index']}"
+    else:
+        rubrik_position = (
+            f"Chunk:      {rader[0]['chunk_index']}–{rader[-1]['chunk_index']} "
+            f"(begärt {chunk_index}, kontext ±{kontext})"
+        )
+    if meta["chunk_antal"]:
+        rubrik_position += f"  av {meta['chunk_antal']} i volymen"
+
+    rader_text = []
+    for r in rader:
+        if len(rader) > 1:
+            markor = " ←" if r["chunk_index"] == chunk_index else ""
+            rader_text.append(f"── Chunk {r['chunk_index']}{markor} ──")
+        rader_text.append(r["chunk_text"] or "")
+    text = "\n".join(rader_text)
+
+    anvisning = ""
+    if max_tecken and max_tecken > 0:
+        anvisning = (
+            f'Fortsätt: kb_get_chunk("{volym_id}", {chunk_index}, '
+            f"fran_tecken={fran_tecken + max_tecken})"
+        )
+
+    huvud = [
+        f"Volym:      {volym_id}{pdf_mark}",
+        f"Titel:      {meta['titel'] or '–'}",
+        f"År:         {ar}  |  Stånd: {meta['stand'] or '–'}",
+        rubrik_position,
+    ]
+    if meta["char_start"] is not None:
+        huvud.append(
+            f"Position:   tecken {_tal(meta['char_start'])}–"
+            f"{_tal(rader[-1]['char_end'] or meta['char_end'] or 0)} i volymens fulltext"
+        )
+    huvud.append(f"URL:        {meta['xml_url'] or '–'}")
+
+    return "\n".join(huvud) + "\n\n" + _skar_ut(
+        text, max_tecken, fran_tecken, anvisning
+    )
+
+
+@mcp.tool()
+def kb_get_volume(
+    volym_id: str,
+    max_tecken: int = -1,
+    fran_tecken: int = 0,
+) -> str:
+    """
+    Hämta metadata och ett textutdrag ur början av en specifik volym.
+
+    Parametrar:
+      volym_id    — volymens ID, t.ex. "rda_1521-1560___01"
+                    (använd kb_list_volumes för att se tillgängliga ID:n)
+      max_tecken  — teckentak för utdraget (standard: KB_MAX_TECKEN_UTDRAG, 2000).
+                    Sätt 0 för hela första textstycket.
+      fran_tecken — börja utdraget vid denna teckenposition inom första stycket
+
+    Returnerar titel, år, stånd, antal textstycken och ett utdrag ur det första.
+    Utdraget visas i originalets stavning.
+
+    OBS: utdraget kommer ur volymens FÖRSTA textstycke — det är en översikt, inte
+    en väg till innehållet längre in i volymen. För att läsa vidare, använd
+    kb_get_chunk(volym_id, chunk_index) med stigande chunk_index, eller sök inom
+    volymen med kb_search.
+    """
+    if max_tecken < 0:
+        max_tecken = MAX_TECKEN_UTDRAG
+
     conn = _hamta_db()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
@@ -388,7 +672,7 @@ def kb_get_volume(volym_id: str) -> str:
             meta = cur.fetchone()
 
             cur.execute(
-                f"""SELECT chunk_text FROM {_prefix()}riksdag_chunks
+                f"""SELECT chunk_text, chunk_index FROM {_prefix()}riksdag_chunks
                 WHERE volym_id = %s ORDER BY chunk_index LIMIT 1""",
                 (volym_id,),
             )
@@ -410,11 +694,18 @@ def kb_get_volume(volym_id: str) -> str:
         f"År:         {ar}",
         f"Stånd:      {meta['stand'] if meta else '–'}",
         f"URL:        {meta['xml_url'] if meta else '–'}",
-        f"Chunks:     {vol_row['chunk_antal']}",
+        f"Textstycken: {vol_row['chunk_antal']} (chunk_index 0–{max(0, (vol_row['chunk_antal'] or 1) - 1)})",
         f"Indexerad:  {indexerad_vid}",
     ]
     if first:
-        lines.append(f"\nFörsta chunken:\n{first['chunk_text'][:800]}")
+        forsta_index = first["chunk_index"] if first["chunk_index"] is not None else 0
+        anvisning = (
+            f'Hela stycket: kb_get_chunk("{volym_id}", {forsta_index}, max_tecken=0)'
+        )
+        lines.append(
+            "\nFörsta textstycket:\n"
+            + _skar_ut(first["chunk_text"] or "", max_tecken, fran_tecken, anvisning)
+        )
     return "\n".join(lines)
 
 
@@ -425,15 +716,23 @@ def kb_list_volumes(
     stand: Optional[str] = None,
 ) -> str:
     """
-    Lista indexerade volymer i databasen.
+    Lista indexerade deldokument i databasen.
+
+    OBS om räknesättet: KB:s katalog beskriver 1 188 bibliografiska volymer, men en
+    volym är ofta uppdelad i flera filer med olika sidintervall. Det här verktyget —
+    och fältet volym_id överallt i servern — avser **deldokument**, av vilka det finns
+    2 447. Ett volym_id som "rda_1521-1560___01" är första delen av den bibliografiska
+    volymen "rda_1521-1560"; delarna ligger i följd och slutar på __01, __02, __03 …
 
     Parametrar:
-      year_from — visa bara volymer vars startår är >= detta värde
-      year_to   — visa bara volymer vars slutår är <= detta värde
+      year_from — visa bara deldokument vars startår är >= detta värde
+      year_to   — visa bara deldokument vars slutår är <= detta värde
       stand     — filtrera på stånd: adel, praster, borgare, bonder,
-                  bihang, riksdagsbeslut (utelämna för alla stånd)
+                  bihang, riksdagsbeslut, samt register (sak- och
+                  personregister) och okant (KU-handlingar 1809–1815).
+                  Utelämna för alla stånd.
 
-    Returnerar en sorterad lista med volym-ID, år, stånd och antal chunks.
+    Returnerar en sorterad lista med volym-ID, år, stånd och antal textstycken.
     """
     conditions: list = []
     params: list = []
@@ -477,7 +776,7 @@ def kb_list_volumes(
         conn.close()
 
     if not rows:
-        return "Inga volymer matchade filtret."
+        return "Inga deldokument matchade filtret."
 
     filter_desc = ""
     if year_from or year_to:
@@ -485,14 +784,14 @@ def kb_list_volumes(
     if stand:
         filter_desc += f" | Stånd: {stand}"
 
-    lines = [f"{len(rows)} volymer{filter_desc}:\n"]
+    lines = [f"{len(rows)} deldokument{filter_desc}:\n"]
     for row in rows:
         ar       = (f"{row['ar_fran']}–{row['ar_till']}" if row["ar_fran"] else "okänt")
         pdf_mark = " [PDF]" if row["pdf_only"] else ""
         titel_str = f"  {row['titel']}" if row["titel"] else ""
         lines.append(
             f"{row['volym_id']}{pdf_mark}"
-            f"  |  {ar}  |  {row['stand'] or '?'}  |  {row['chunks']} chunks"
+            f"  |  {ar}  |  {row['stand'] or '?'}  |  {row['chunks']} textstycken"
             f"{titel_str}"
         )
     return "\n".join(lines)

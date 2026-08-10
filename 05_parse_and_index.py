@@ -45,7 +45,7 @@ load_dotenv()
 BASE_DIR        = Path(__file__).parent
 XML_RAW         = BASE_DIR / os.getenv("XML_RAW_DIR",  "./xml_raw")
 PDF_RAW         = BASE_DIR / os.getenv("PDF_RAW_DIR",  "./pdf_raw")
-VOLUMES_JSON    = BASE_DIR / "volumes.json"
+MANIFEST_JSON   = BASE_DIR / "manifest_delar.json"
 
 # KBLab/sentence-bert-swedish-cased är tränad specifikt för semantisk likhet
 # (knowledge distillation från all-mpnet-base-v2). Byt inte till
@@ -241,15 +241,29 @@ SCHEMA_STATEMENTS = [
     """,
 ]
 
-SCHEMA_INDEXES = [
+# De tunga indexen (HNSW + två GIN) underhålls vid varje insert. Under en stor
+# bulkladdning växer minnesåtgången per insert med indexens storlek och WAL-
+# volymen blir mycket stor — det överväldigar databasen. Därför kan de släppas
+# under laddningen (--utan-index) och byggas om i ett svep efteråt (--skapa-index).
+SCHEMA_INDEXES_TUNGA = [
     "CREATE INDEX IF NOT EXISTS idx_fts   ON kb_riksdagstryck.riksdag_chunks USING GIN(fts_vector)",
     """CREATE INDEX IF NOT EXISTS idx_vec ON kb_riksdagstryck.riksdag_chunks
         USING hnsw(embedding vector_cosine_ops)
         WITH (m = 16, ef_construction = 64)""",
-    "CREATE INDEX IF NOT EXISTS idx_stand ON kb_riksdagstryck.riksdag_chunks (stand)",
-    "CREATE INDEX IF NOT EXISTS idx_ar    ON kb_riksdagstryck.riksdag_chunks (ar_fran, ar_till)",
     "CREATE INDEX IF NOT EXISTS idx_trgm  ON kb_riksdagstryck.riksdag_chunks USING GIN(chunk_text gin_trgm_ops)",
 ]
+
+# Lätta btree-index — billiga att underhålla och kan ligga kvar även under
+# bulkladdning.
+SCHEMA_INDEXES_LATTA = [
+    "CREATE INDEX IF NOT EXISTS idx_stand ON kb_riksdagstryck.riksdag_chunks (stand)",
+    "CREATE INDEX IF NOT EXISTS idx_ar    ON kb_riksdagstryck.riksdag_chunks (ar_fran, ar_till)",
+]
+
+SCHEMA_INDEXES = SCHEMA_INDEXES_TUNGA + SCHEMA_INDEXES_LATTA
+
+# Indexnamn som släpps inför bulkladdning och byggs om efteråt.
+_TUNGA_INDEX_NAMN = ["idx_vec", "idx_fts", "idx_trgm"]
 
 
 # ── Databashjälpfunktioner ────────────────────────────────────────────────────
@@ -282,13 +296,20 @@ def _prefix() -> str:
     return "kb_riksdagstryck."
 
 
-def setup_schema(conn):
-    """Skapa schema, tabeller och index om de inte finns."""
+def setup_schema(conn, skapa_tunga_index: bool = True):
+    """Skapa schema, tabeller och index om de inte finns.
+
+    Vid bulkladdning (skapa_tunga_index=False) skapas bara de lätta btree-
+    indexen; de tunga (HNSW + GIN) byggs separat efteråt med skapa_tunga_index().
+    """
+    index_satser = list(SCHEMA_INDEXES_LATTA)
+    if skapa_tunga_index:
+        index_satser += SCHEMA_INDEXES_TUNGA
     with conn.cursor() as cur:
         for stmt in SCHEMA_STATEMENTS:
             cur.execute(stmt)
         conn.commit()
-        for stmt in SCHEMA_INDEXES:
+        for stmt in index_satser:
             try:
                 cur.execute(stmt)
                 conn.commit()
@@ -296,6 +317,53 @@ def setup_schema(conn):
                 conn.rollback()
                 log.warning("Index-sats misslyckades (ignoreras): %s", exc)
     log.info("Databasschema OK (schema: kb_riksdagstryck)")
+
+
+def slap_tunga_index(conn):
+    """Släpp de tunga indexen (HNSW + GIN) inför bulkladdning.
+
+    Utan dem underhålls inget tungt index per insert — minnesåtgång och WAL-
+    volym sjunker kraftigt och inserterna blir snabbare. Befintlig data rörs
+    inte; indexen byggs om efteråt med skapa_tunga_index().
+    """
+    with conn.cursor() as cur:
+        for namn in _TUNGA_INDEX_NAMN:
+            cur.execute(f"DROP INDEX IF EXISTS kb_riksdagstryck.{namn}")
+            log.info("Index %s släppt", namn)
+    conn.commit()
+
+
+def satt_autovacuum(conn, aktiverad: bool):
+    """Slå av eller på autovacuum för chunk-tabellen.
+
+    Insert-triggad autovacuum på en stor tabell med GIN- och HNSW-index drar
+    mycket CPU mitt under laddningen. Den stängs av under bulkladdningen och
+    slås på igen när indexen är byggda.
+    """
+    lage = "true" if aktiverad else "false"
+    with conn.cursor() as cur:
+        cur.execute(
+            f"ALTER TABLE kb_riksdagstryck.riksdag_chunks "
+            f"SET (autovacuum_enabled = {lage})"
+        )
+    conn.commit()
+    log.info("Autovacuum för riksdag_chunks: %s", "på" if aktiverad else "av")
+
+
+def skapa_tunga_index(conn, maintenance_work_mem: str = "2GB"):
+    """Bygg de tunga indexen (HNSW + GIN) i ett svep över hela tabellen.
+
+    Höjt maintenance_work_mem låter HNSW-grafen och GIN-byggena hållas i minne
+    så bygget går i en fas. Körs efter att all data är inläst.
+    """
+    n = len(SCHEMA_INDEXES_TUNGA)
+    with conn.cursor() as cur:
+        cur.execute("SET maintenance_work_mem = %s", (maintenance_work_mem,))
+        for i, stmt in enumerate(SCHEMA_INDEXES_TUNGA, start=1):
+            log.info("Bygger tungt index %d/%d (kan ta flera minuter) …", i, n)
+            cur.execute(stmt)
+            conn.commit()
+    log.info("Tunga index byggda (maintenance_work_mem=%s)", maintenance_work_mem)
 
 
 def already_indexed(conn, volym_id: str) -> bool:
@@ -511,10 +579,13 @@ def embed_texts(texts: list) -> list:
 # ── Volymsindex ───────────────────────────────────────────────────────────────
 
 def load_volumes_index() -> dict:
-    """Ladda volumes.json och returnera dict { volym_id -> metadata }."""
-    with open(VOLUMES_JSON, encoding="utf-8") as f:
-        vols = json.load(f)
-    return {v["volym_id"]: v for v in vols}
+    """Ladda manifest_delar.json och returnera dict { volym_id -> metadata }.
+
+    Manifestet har en rad per deldokument med volym_id, stånd, år och titel,
+    avdubblat på volym_id — så nycklarna är unika."""
+    with open(MANIFEST_JSON, encoding="utf-8") as f:
+        delar = json.load(f)
+    return {d["volym_id"]: d for d in delar}
 
 
 # Prefix → stånd (KB:s eget namnmönster)
@@ -656,13 +727,38 @@ def main():
     parser.add_argument("--force",   action="store_true",
                         help="Tvinga omindexering av --volym (raderar befintliga chunks forst)")
     parser.add_argument("--no-embed",action="store_true", help="Hoppa over embeddings")
+    parser.add_argument("--utan-index", action="store_true",
+                        help="Slapp tunga index (HNSW + GIN) och stang av autovacuum "
+                             "infor bulkladdning. Kor --skapa-index efterat.")
+    parser.add_argument("--skapa-index", action="store_true",
+                        help="Bygg de tunga indexen over hela tabellen, sla pa "
+                             "autovacuum igen och kor ANALYZE. Gor ingen indexering.")
     args = parser.parse_args()
 
-    if not VOLUMES_JSON.exists():
-        log.error("volumes.json saknas -- kor 01_crawl_volumes.py forst")
+    # --skapa-index ar ett fristaende efterbearbetningssteg och kor ingen laddning.
+    if args.skapa_index:
+        try:
+            conn = _hamta_db()
+            log.info("Ansluten till PostgreSQL via DATABASE_URL")
+        except Exception as exc:
+            log.error("Kan inte ansluta till PostgreSQL: %s", exc)
+            return
+        setup_schema(conn, skapa_tunga_index=False)
+        skapa_tunga_index(conn)
+        satt_autovacuum(conn, True)
+        with conn.cursor() as cur:
+            log.info("Kor ANALYZE …")
+            cur.execute("ANALYZE kb_riksdagstryck.riksdag_chunks")
+        conn.commit()
+        log.info("Klar — tunga index byggda, autovacuum pa, statistik uppdaterad")
+        conn.close()
+        return
+
+    if not MANIFEST_JSON.exists():
+        log.error("manifest_delar.json saknas -- kor 01_crawl_volumes.py forst")
         return
     volumes_index = load_volumes_index()
-    log.info("%d volymer i volumes.json", len(volumes_index))
+    log.info("%d deldokument i manifest_delar.json", len(volumes_index))
 
     all_files = find_xml_files()
     n_pdf = sum(1 for _, p in all_files if p)
@@ -684,9 +780,14 @@ def main():
             log.error("Kan inte ansluta till PostgreSQL: %s", exc)
             log.error("Kontrollera att Docker-containern kors: docker compose up -d")
             return
-        setup_schema(conn)
+        setup_schema(conn, skapa_tunga_index=not args.utan_index)
         if args.reset:
             reset_database(conn)
+        if args.utan_index:
+            slap_tunga_index(conn)
+            satt_autovacuum(conn, False)
+            log.info("Bulkladdningslage: tunga index slappta, autovacuum av. "
+                     "Kor 05_parse_and_index.py --skapa-index nar laddningen ar klar.")
     else:
         conn = None
         log.info("DRY-RUN aktiverat -- inga andringar skrivs till databasen")
@@ -703,8 +804,8 @@ def main():
         else:
             meta = inferera_metadata_fran_volym_id(vid)
             log.warning(
-                "%s: saknas i volumes.json — stånd/år infererade från filnamnet "
-                "(stand=%s, ar_fran=%s). Lägg till manuellt i volumes.json för korrekt metadata.",
+                "%s: saknas i manifest_delar.json — stånd/år infererade från filnamnet "
+                "(stand=%s, ar_fran=%s).",
                 vid, meta.get("stand"), meta.get("ar_fran")
             )
 

@@ -11,6 +11,10 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     container_name: riksdagstryck_db
+    # pgvector lägger HNSW-byggets graf i delat minne (/dev/shm), dimensionerat
+    # efter maintenance_work_mem. Dockers standard på 64 MB är för litet och ger
+    # "could not resize shared memory segment ... No space left on device".
+    shm_size: "4gb"
     environment:
       POSTGRES_DB:       ${PGDATABASE}
       POSTGRES_USER:     ${PGUSER}

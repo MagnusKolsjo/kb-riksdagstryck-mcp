@@ -21,3 +21,15 @@ debug_index.html
 # Loggar
 *.log
 logs/
+
+# Lokalt skill — installeras i Claude Desktop, hör inte till serverns repo
+skills/
+
+# Körrapporter och analysutdata — genereras av skripten, hör inte till repot
+saknade_delar.json
+utgava_klassning.csv
+utgava_klassning.json
+klassificera_utgava.py
+
+# Backupfiler
+*.bak-*

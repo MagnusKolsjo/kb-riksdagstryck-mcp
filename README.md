@@ -10,22 +10,35 @@ MCP-kompatibla AI-verktyg.
 
 KB har digitaliserat ståndsriksdagens handlingar till ABBYY FineReader 10 XML.
 Materialet täcker alla fyra stånd — adel, präster, borgare och bönder — samt
-riksdagsbeslut och bihang (bilagor). Totalt 1 188 volymer är kartlagda.
+riksdagsbeslut och bihang (bilagor).
 
-| Kategori | Volymer |
+### Två sätt att räkna — viktigt att hålla isär
+
+KB:s katalog beskriver **1 188 bibliografiska volymer**, men en volym är ofta uppdelad
+i flera filer med olika sidintervall (filstammar som slutar på `__01`, `__02`, `__03` …).
+Korpusen består därför av **2 447 deldokument** — 2 430 XML och 17 PDF-only.
+
+**Verktygen arbetar på deldokumentnivå.** Fältet `volym_id` och verktyget
+`kb_list_volumes` avser deldokument, inte bibliografiska volymer. `kb_list_volumes`
+returnerar alltså upp till 2 447 poster, inte 1 188. Ett `volym_id` som
+`rda_1521-1560___01` är den första delen av den bibliografiska volymen
+`rda_1521-1560`.
+
+| Kategori | Bibliografiska volymer |
 |---|---|
-| Adel (ridderskapet) | 349 |
-| Bihang (bilagor till protokoll) | 334 |
-| Präster | 174 |
+| Bihang (bilagor till protokoll) | 336 |
+| Adel (ridderskapet) | 348 |
+| Präster | 183 |
 | Bönder | 157 |
-| Borgare | 130 |
+| Borgare | 136 |
 | Riksdagsbeslut | 21 |
 | Register | 3 |
-| Meta-dokument | 4 |
+| Okänt (KU-handlingar 1809–1815) | 4 |
 
-**16 volymer** från perioden 1746–1847 (frihetstiden, Gustav III:s revolution 1772,
-mordet på Gustav III 1792, förlusten av Finland 1809) finns enbart som PDF.
-Dessa konverteras till kompatibelt XML av `04_pdf_to_xml.py`.
+**17 deldokument** från perioden 1746–1847 (frihetstiden, Gustav III:s revolution
+1772, mordet på Gustav III 1792, förlusten av Finland 1809) finns enbart som PDF
+hos KB — prästeståndets och borgarståndets protokoll 1746–1766 samt två
+bihangsdelar. Dessa konverteras till kompatibelt XML av `04_pdf_to_xml.py`.
 
 > **Känd begränsning — borgarståndet 1765–1766:** KB:s digitalisering av dessa volymer
 > (Del 1 och Del 2) finns inte i XML-form. KB bekräftar på sina metadatasidor:
@@ -59,11 +72,52 @@ pip install -r requirements.txt
 # 3. Konfigurera miljövariabler
 cp config.example.env .env
 # Öppna .env och fyll i DATABASE_URL med ditt eget användarnamn och lösenord
+```
 
-# 4. Starta PostgreSQL + pgvector
+### Steg 4: PostgreSQL med pgvector
+
+Servern behöver en PostgreSQL-databas med `pgvector`-tillägget. Välj **en** av två
+vägar — de är likvärdiga, och valet påverkar inget annat än hur databasen startas.
+
+#### Alternativ A: egen PostgreSQL
+
+Passar dig som redan kör PostgreSQL, eller föredrar en systeminstallation framför
+containrar. Kräver PostgreSQL 14+ med `pgvector` installerat.
+
+```bash
+createdb riksdag
+psql -d riksdag -c "CREATE EXTENSION IF NOT EXISTS vector;"
+psql -d riksdag -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+```
+
+Peka `DATABASE_URL` i `.env` mot databasen. Inget mer behövs — schemat
+`kb_riksdagstryck` skapas automatiskt vid första körningen. PG-variablerna i
+`config.example.env` kan lämnas orörda; de används bara av alternativ B.
+
+#### Alternativ B: PostgreSQL via Docker
+
+Passar dig som vill komma igång utan att installera PostgreSQL. Den medföljande
+`docker-compose.yml` startar `pgvector/pgvector:pg16` med rätt tillägg förinstallerade.
+
+Fyll först i **både** `DATABASE_URL` och PG-variablerna i `.env` — Docker Compose läser
+de senare för att skapa databasen och användaren, och de måste stämma överens med
+`DATABASE_URL`:
+
+```env
+DATABASE_URL=postgresql://mitt_db_anvandare:mitt_losenord@localhost:5432/riksdag
+PGDATABASE=riksdag
+PGUSER=mitt_db_anvandare
+PGPASSWORD=mitt_losenord
+PGPORT=5432
+```
+
+```bash
 docker compose up -d
 # Vänta ~10 sekunder tills databasen är redo
 ```
+
+> `POSTGRES_PASSWORD` är obligatorisk för postgres-imagen — lämnas `PGPASSWORD` tomt
+> vägrar containern starta.
 
 ---
 
@@ -73,8 +127,15 @@ docker compose up -d
 ```bash
 python3 01_crawl_volumes.py
 ```
-Hämtar volymförteckningen från `riksdagstryck.kb.se` och sparar `volumes.json`
-och `volumes.csv`. Tar ~10 minuter (1 188 metadata-sidor hämtas).
+Hämtar volymförteckningen från `riksdagstryck.kb.se` och sparar tre filer:
+`manifest_delar.json` (en rad per deldokument — den auktoritativa förteckningen
+som steg 2 och 4 utgår från), samt `volumes.json` och `volumes.csv`.
+Tar ~10 minuter; 1 157 metadata-sidor hämtas.
+
+**En volym består ofta av flera deldokument.** KB:s metadata-sidor listar
+filstammar som slutar på `__01`, `__02`, `__03` … med olika sidintervall, och
+tillsammans utgör de volymen. Krawlen samlar samtliga — totalt 2 447
+deldokument, varav 2 430 finns som XML och 17 bara som PDF.
 
 > **OBS:** KB:s server kräver korrekt User-Agent och Referer-header. Skriptet sätter dessa automatiskt.
 
@@ -82,8 +143,36 @@ och `volumes.csv`. Tar ~10 minuter (1 188 metadata-sidor hämtas).
 ```bash
 python3 02_download_xml.py
 ```
-Laddar ner 1 172 XML-filer till `xml_raw/` och 16 PDF-filer till `pdf_raw/`.
-Tar ~30–60 minuter. Stöder återupptagning om det avbryts.
+Läser `manifest_delar.json` och laddar ner XML för alla deldokument som har
+sådan, samt PDF för de deldokument KB saknar XML för. Tar ~30–60 minuter och
+stöder återupptagning om det avbryts.
+
+Skriptet är idempotent och fungerar därför både som **förstagångsinstallation**
+och som **komplettering** av en befintlig installation — allt som redan ligger
+på disk hoppas över.
+
+### Steg 2b: Verifiera täckningen
+```bash
+python3 verifiera_taeckning.py
+```
+Jämför manifestet mot vad som faktiskt finns på disk och rapporterar exakt vad
+som saknas. **Kör alltid detta efter steg 2**, och särskilt efter en
+komplettering av en äldre installation.
+
+Skriptet avslutas med felkod `2` om något saknas, så att det inte går att av
+misstag gå vidare till indexeringen på ofullständigt underlag. Det skriver också
+`saknade_delar.json` med de deldokument som återstår att hämta.
+
+Utöver saknade filer flaggas **orphaner** — filer på disk som inte motsvarar
+något deldokument hos KB. De är oftast legitima: egna PDF→XML-konverteringar av
+volymer KB bara har som PDF. Granska ändå listan så att inget är en felnedladdad
+dubblett.
+
+> **Varför spärren finns:** tidigare versioner av krawlen behöll bara *ett*
+> deldokument per metadata-sida, vilket gjorde att flerdelade volymer skördades
+> ofullständigt utan att något syntes i loggarna. Fullständighetskontroller som
+> mäter mot de nedladdade filerna i stället för mot KB:s faktiska filuppsättning
+> kan inte upptäcka den sortens hål. Den här kontrollen mäter mot manifestet.
 
 ### Steg 3: Konvertera PDF-filer till XML
 ```bash
@@ -107,6 +196,13 @@ Använd `--force --volym <id>` för att tvinga omindexering av en enskild volym
 ```bash
 python3 05_parse_and_index.py --force --volym bih_1840-41_7_2
 ```
+
+> **Viktigt om återupptagning:** indexeringen hoppar över volymer som redan
+> finns i `indexerade_volymer`. Det gör en avbruten körning säker att starta om,
+> men innebär också att en rättning av hur metadata *härleds* — till exempel
+> ståndsmappningen — inte når volymer som redan är indexerade. Efter en sådan
+> ändring måste berörda volymer köras om med `--force --volym`, eller hela
+> korpusen med `--reset`.
 
 ### Steg 5: Starta MCP-servern
 Starta servern och anslut din MCP-klient (se konfigurationsavsnittet nedan).
@@ -226,9 +322,34 @@ sin expansion.
 
 | Verktyg | Parametrar | Beskrivning |
 |---|---|---|
-| `kb_search` | `query`, `year_from`, `year_to`, `stand`, `limit` | Hybridsökning (fulltext + semantisk, viktad 35/65). Returnerar textutdrag i originalets stavning. |
-| `kb_get_volume` | `volym_id` | Metadata och utdrag ur första chunken. Originalstavning. |
+| `kb_search` | `query`, `year_from`, `year_to`, `stand`, `limit`, `max_tecken` | Hybridsökning (fulltext + semantisk, viktad 35/65). Returnerar textutdrag i originalets stavning, med varje träffs adress i korpusen. |
+| `kb_get_chunk` | `volym_id`, `chunk_index`, `kontext`, `max_tecken`, `fran_tecken` | Hela textstycket bakom en sökträff, valfritt med omgivande stycken. |
+| `kb_get_volume` | `volym_id`, `max_tecken`, `fran_tecken` | Metadata och utdrag ur volymens första textstycke. Originalstavning. |
 | `kb_list_volumes` | `year_from`, `year_to`, `stand` | Filtrerbar volymförteckning. |
+
+### Textutdrag, trunkering och ordagranna citat
+
+Ett textstycke i databasen är ungefär 600 ord — flera tusen tecken. `kb_search`
+kapar därför varje utdrag vid ett teckentak (`KB_MAX_TECKEN_TRAFF`, standard
+1 500) så att ett sökresultat med många träffar inte blir oöverskådligt.
+
+Kapningen sker alltid på ordgräns och **markeras i svaret** med hur mycket som
+visas av hur mycket, tillsammans med anropet som ger resten:
+
+```
+[Visar tecken 1–1 494 av 4 312. Hela textstycket: kb_get_chunk("bih_1862-1863_1-1-1_", 34)]
+```
+
+Varje träff anger sin adress i korpusen (`Volym` + `Chunk`). Det gör det möjligt
+att gå från en träff till hela texten bakom den — vilket är en förutsättning för
+att kunna kontrollera att ett citat är fullständigt.
+
+**Regel vid ordagranna citat:** återge aldrig lagtext eller protokolltext ur ett
+sökutdrag som är markerat som kapat. Hämta hela stycket med `kb_get_chunk` först.
+Löper meningen över en styckegräns — använd `kontext=1` för att få med grannarna.
+
+Teckentaket kan sättas per anrop med `max_tecken` (`0` = ingen trunkering) eller
+som standard i `.env`. `fran_tecken` bläddrar vidare i en text som kapats.
 
 ---
 
@@ -257,7 +378,7 @@ CREATE TABLE kb_riksdagstryck.riksdag_chunks (
     embedding             vector(768),
     char_start            INTEGER,               -- chunkens första teckenposition i volymens fulltext
     char_end              INTEGER,               -- chunkens sista teckenposition
-    web_dok_id            INTEGER,               -- pekare till ström 7 (NULL tills ström 7 är aktiv)
+    web_dok_id            INTEGER,               -- pekare till extern webbplats (NULL om sådan saknas)
     fts_vector            tsvector GENERATED ALWAYS AS
                           (to_tsvector('swedish',
                               COALESCE(chunk_text_normalized, chunk_text))) STORED

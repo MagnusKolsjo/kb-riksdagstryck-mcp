@@ -107,10 +107,10 @@ SELECT pg_temp.byt_kolumn('kb_riksdagstryck', 'indexerade_volymer', 'indexed_at'
 SELECT pg_temp.lagg_till_kolumn('kb_riksdagstryck', 'riksdag_chunks', 'char_start', 'INTEGER');
 SELECT pg_temp.lagg_till_kolumn('kb_riksdagstryck', 'riksdag_chunks', 'char_end',   'INTEGER');
 
--- web_dok_id: pekare till motsvarande dokument i ström 7:s riksdagstryck_web-schema.
--- Populeras enbart av den som även hostar webbplatsen (ström 7) — alla andra
+-- web_dok_id: pekare till motsvarande dokument i en extern webbplats-databas.
+-- Populeras enbart av den som även hostar en sådan webbplats — alla andra
 -- användare påverkas inte. Inget FK-constraint nu eftersom riksdagstryck_web-tabellerna
--- inte är skapade än; constraint kan adderas senare när ström 7 är på plats.
+-- inte är skapade än; constraint kan adderas senare när webbplatsen är på plats.
 SELECT pg_temp.lagg_till_kolumn('kb_riksdagstryck', 'riksdag_chunks', 'web_dok_id', 'INTEGER');
 
 COMMIT;
