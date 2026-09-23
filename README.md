@@ -51,6 +51,7 @@ bihangsdelar. Dessa konverteras till kompatibelt XML av `04_pdf_to_xml.py`.
 ## Krav
 
 - Python 3.11+
+- `mcp` 2.x (se `requirements.txt`)
 - Docker (för PostgreSQL + pgvector)
 - ~3–6 GB diskutrymme för råfiler och databas
 - Embedding-steget är tidskrävande — räkna med flera timmar
@@ -259,7 +260,8 @@ MCP_TRANSPORT=http python3 mcp_server.py
 Servern lyssnar på `MCP_HOST:MCP_PORT` (standard `127.0.0.1:8000`). I produktion
 läggs en reverse proxy (t.ex. Nginx) framför och hanterar TLS.
 
-**API-nyckel:** generera och sätt i `.env`:
+**API-nyckel krävs.** http-läget är fail-closed: utan `MCP_API_KEY` avbryts
+uppstarten. Generera en nyckel och sätt den i `.env`:
 
 ```bash
 python3 -c "import secrets; print(secrets.token_hex(32))"
@@ -320,12 +322,21 @@ sin expansion.
 
 ## MCP-verktyg
 
+Alla fyra verktyg svarar strukturerat (typat svar med `outputSchema`), eftersom de
+är steg i samma citeringskedja: `kb_search` hittar en adress (`volym_id` +
+`chunk_index`), och `kb_get_chunk`/`kb_get_volume` löser upp adressen till text.
+Fält som kan saknas i äldre eller ofullständiga poster (titel, år, stånd, URL,
+antal textstycken) är `null` i stället för utelämnade.
+
 | Verktyg | Parametrar | Beskrivning |
 |---|---|---|
 | `kb_search` | `query`, `year_from`, `year_to`, `stand`, `limit`, `max_tecken` | Hybridsökning (fulltext + semantisk, viktad 35/65). Returnerar textutdrag i originalets stavning, med varje träffs adress i korpusen. |
 | `kb_get_chunk` | `volym_id`, `chunk_index`, `kontext`, `max_tecken`, `fran_tecken` | Hela textstycket bakom en sökträff, valfritt med omgivande stycken. |
 | `kb_get_volume` | `volym_id`, `max_tecken`, `fran_tecken` | Metadata och utdrag ur volymens första textstycke. Originalstavning. |
 | `kb_list_volumes` | `year_from`, `year_to`, `stand` | Filtrerbar volymförteckning. |
+
+Förväntade fel (okänt volym-id, okänt chunk-index, databasfel) returneras som
+MCP-fel (`isError`), inte som text att tolka.
 
 ### Textutdrag, trunkering och ordagranna citat
 

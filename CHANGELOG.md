@@ -6,6 +6,40 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [Unreleased]
+
+### Ändrat
+
+- **Migrerad till `mcp` 2.x** (`MCPServer` från `mcp.server.mcpserver`, tidigare
+  `FastMCP`). Egna kopior av `mcp_transport.py` och `mcp_annotationer.py` från
+  projektets mallar styr uppstart och verktygsannotationer.
+- **Samtliga fyra verktyg svarar strukturerat** (typat svar, `outputSchema`)
+  i stället för formaterad text. `kb_search`, `kb_get_chunk`, `kb_get_volume`
+  och `kb_list_volumes` är steg i samma citeringskedja — sökträffens adress
+  (`volym_id` + `chunk_index`) är nu maskinläsbara fält i svaret, inte bara
+  inbäddade i en textrad. Fält som kan saknas i källdata (titel, år, stånd,
+  URL, antal textstycken) är `null` snarare än utelämnade.
+- **Förväntade fel** (okänt volym-id, okänt chunk-index, databasfel) kastas nu
+  som `ToolError` (`isError: true`) i stället för att returneras som text eller
+  `{"fel": ...}`.
+- **Lat inläsning av embeddingmodellen är trådsäker** — `get_encoder()` är
+  skyddad av ett `threading.Lock` med dubbelkontrollerad låsning, eftersom
+  synkrona verktyg i mcp 2.x kan köras samtidigt på flera arbetstrådar.
+- **HTTP-transporten** använder nu den gemensamma `starta(...)`-funktionen i
+  `mcp_transport.py` (Streamable HTTP). Den egna `_make_auth_app`-wrappern och
+  SSE-reservvägen (`sse_app()`) är borttagna.
+
+### Brytande ändringar
+
+- **http-läget kräver nu `MCP_API_KEY`** (fail-closed). Tidigare startade
+  servern utan nyckel, med en varningslogg. Uppstart utan nyckel avbryts nu
+  med felkod 2.
+- **Verktygens svar är strukturerade objekt**, inte längre en enda
+  formaterad textsträng. Fälten motsvarar samma information som förut, men
+  en klient som parsade textformatet (rubriker, `━━━`-avdelare) måste läsa
+  de strukturerade fälten i stället. Verktygsnamn och parameternamn är
+  oförändrade.
+
 ## [2.1.0] — 2026-08-10
 
 ### Tillagt
