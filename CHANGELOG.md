@@ -38,6 +38,12 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
   träffmängden; svaret bär `totalt_matchande`, `har_fler` och
   `nasta_position` för att hämta nästa sida. `year_from`, `year_to` och
   `stand` är oförändrade.
+- **Läs vidare-anvisningen i `kb_get_chunk` (och de andra verktyg som delar
+  `_skar_ut`) pekade på `fran_tecken + max_tecken`.** Kapningen sker på
+  ord- eller radgräns, så utdraget kan bli kortare än `max_tecken` — nästa
+  anrop hoppade då över det avkapade ordet. Anvisningen anger nu utdragets
+  faktiska slutposition, så att på varandra följande utdrag tillsammans blir
+  exakt den sammanhängande texten.
 
 ## [2.1.0] — 2026-08-10
 

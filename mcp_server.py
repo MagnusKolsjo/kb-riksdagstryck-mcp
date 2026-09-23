@@ -35,7 +35,7 @@ import os
 import logging
 import threading
 from pathlib import Path
-from typing import Optional, TypedDict
+from typing import Callable, Optional, TypedDict
 
 import psycopg2
 import psycopg2.extras
@@ -189,7 +189,7 @@ def _skar_ut(
     text: str,
     max_tecken: int,
     fran_tecken: int = 0,
-    anvisning: str = "",
+    anvisning: Callable[[int], str] | None = None,
 ) -> str:
     """
     Skär ut ett textutdrag och markera alltid när något har kapats.
@@ -203,7 +203,14 @@ def _skar_ut(
       text        — hela texten
       max_tecken  — teckentak; 0 eller negativt betyder ingen trunkering
       fran_tecken — starta utdraget vid denna teckenposition (för paginering)
-      anvisning   — anropsexempel som visar hur resten hämtas
+      anvisning   — funktion som tar utdragets FAKTISKA slutposition och
+                    returnerar anropsexemplet för att hämta resten. Anropas
+                    bara när utdraget faktiskt är kapat. Positionen måste
+                    komma härifrån (inte fran_tecken + max_tecken): kapningen
+                    backar till närmaste ord- eller radgräns, så utdraget kan
+                    bli kortare än max_tecken — en fortsättning vid
+                    fran_tecken + max_tecken skulle då hoppa över det
+                    avkapade ordet.
 
     Klipper alltid på ord- eller radgräns, aldrig mitt i ett ord.
     """
@@ -219,7 +226,9 @@ def _skar_ut(
         brytpunkt = max(utdrag.rfind(" "), utdrag.rfind("\n"))
         if brytpunkt > max_tecken * 0.6:
             utdrag = utdrag[:brytpunkt]
-        utdrag = utdrag.rstrip()
+        # Ett utdrag som bara blir blanktecken skulle ge slut == start, och
+        # anvisningen skulle då peka på samma ställe igen.
+        utdrag = utdrag.rstrip() or rest[:max_tecken]
     else:
         utdrag = rest
 
@@ -228,8 +237,8 @@ def _skar_ut(
 
     slut = start + len(utdrag)
     noter = [f"Visar tecken {_tal(start + 1)}–{_tal(slut)} av {_tal(totalt)}"]
-    if anvisning:
-        noter.append(anvisning)
+    if kapad_i_slutet and anvisning is not None:
+        noter.append(anvisning(slut))
     return utdrag + "\n\n[" + ". ".join(noter) + "]"
 
 
@@ -573,7 +582,10 @@ def kb_search(
     for row in rows:
         chunk_index = row["chunk_index"]
         utdrag_hela = row["utdrag"] or ""
-        anvisning = f'Hela textstycket: kb_get_chunk("{row["volym_id"]}", {chunk_index})'
+        anvisning = (
+            lambda _slut, vid=row["volym_id"], ci=chunk_index:
+                f'Hela textstycket: kb_get_chunk("{vid}", {ci})'
+        )
         utdrag = _skar_ut(utdrag_hela, max_tecken, anvisning=anvisning)
         traff_trunkerad = len(utdrag) != len(utdrag_hela)
         nagot_trunkerat = nagot_trunkerat or traff_trunkerad
@@ -704,12 +716,9 @@ def kb_get_chunk(
         rader_text.append(r["chunk_text"] or "")
     text_hela = "\n".join(rader_text)
 
-    anvisning = ""
-    if max_tecken and max_tecken > 0:
-        anvisning = (
-            f'Fortsätt: kb_get_chunk("{volym_id}", {chunk_index}, '
-            f"fran_tecken={fran_tecken + max_tecken})"
-        )
+    anvisning = (
+        lambda slut: f'Fortsätt: kb_get_chunk("{volym_id}", {chunk_index}, fran_tecken={slut})'
+    )
 
     text = _skar_ut(text_hela, max_tecken, fran_tecken, anvisning)
 
@@ -815,7 +824,7 @@ def kb_get_volume(
     if first:
         forsta_index = first["chunk_index"] if first["chunk_index"] is not None else 0
         anvisning = (
-            f'Hela stycket: kb_get_chunk("{volym_id}", {forsta_index}, max_tecken=0)'
+            lambda _slut: f'Hela stycket: kb_get_chunk("{volym_id}", {forsta_index}, max_tecken=0)'
         )
         text_hela = first["chunk_text"] or ""
         utdrag = _skar_ut(text_hela, max_tecken, fran_tecken, anvisning)
