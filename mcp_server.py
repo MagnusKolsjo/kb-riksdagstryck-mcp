@@ -17,11 +17,12 @@ Svarsstorlek och citatgranskning:
   (volym_id + chunk_index), och kb_get_chunk hämtar hela textstycket bakom en
   träff — vilket är förutsättningen för att kunna verifiera ett ordagrant citat.
 
-Transport-lägen (styrs via MCP_TRANSPORT i .env):
+Transport-lägen (styrs via MCP_TRANSPORT i .env, se mcp_transport.py):
   stdio (standard): MCP-klienten startar och hanterar processen direkt.
-  http:             Servern lyssnar på MCP_HOST:MCP_PORT. Sätt MCP_API_KEY
-                    för Bearer-token-autentisering. I produktion: lägg en
-                    reverse proxy (t.ex. Nginx) framför servern.
+  http:             Servern lyssnar på MCP_HOST:MCP_PORT (standard 8000).
+                    MCP_API_KEY krävs — uppstarten avbryts annars (fail-closed).
+                    Klienter autentiserar med Authorization: Bearer <nyckel>.
+                    I produktion: lägg en reverse proxy (t.ex. Nginx) framför.
 
 Query-expansion (valfritt, styrs via QUERY_EXPANSION_ENABLED i .env):
   Utökar söktermen med historiska stavningsvarianter och latinska ekvivalenter
@@ -32,13 +33,18 @@ Query-expansion (valfritt, styrs via QUERY_EXPANSION_ENABLED i .env):
 
 import os
 import logging
+import threading
 from pathlib import Path
-from typing import Optional
+from typing import Optional, TypedDict
 
 import psycopg2
 import psycopg2.extras
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
+
+from mcp_annotationer import CACHE_HINTAR, LASNING_DB
+from mcp_transport import starta
 
 load_dotenv()
 
@@ -49,11 +55,7 @@ load_dotenv()
 DATABASE_URL    = os.getenv("DATABASE_URL", "")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "KBLab/sentence-bert-swedish-cased")
 
-# Transport och autentisering
-MCP_TRANSPORT = os.getenv("MCP_TRANSPORT", "stdio").lower()
-MCP_HOST      = os.getenv("MCP_HOST",      "127.0.0.1")
-MCP_PORT      = int(os.getenv("MCP_PORT",  "8000"))
-MCP_API_KEY   = os.getenv("MCP_API_KEY",   "")
+# Transport och autentisering (stdio/http, MCP_API_KEY) hanteras av mcp_transport.py.
 
 # Query-expansion (valfritt)
 QUERY_EXPANSION_ENABLED     = os.getenv("QUERY_EXPANSION_ENABLED", "false").lower() == "true"
@@ -86,23 +88,34 @@ log = logging.getLogger(__name__)
 # ── Lazy-laddade resurser ─────────────────────────────────────────────────────
 
 _encoder = None
+_encoder_lock = threading.Lock()
 
 
 def get_encoder():
-    """Ladda SentenceTransformer-modellen (en gång per process)."""
+    """Ladda SentenceTransformer-modellen (en gång per process).
+
+    Synkrona verktyg körs på arbetstrådar i mcp 2.x, så flera sökanrop kan
+    nå den här funktionen samtidigt. Dubbelkontrollerad låsning: den snabba
+    kontrollen utan lås täcker det vanliga fallet (modellen redan laddad);
+    låset tas bara av den tråd som faktiskt behöver ladda modellen, och den
+    andra kontrollen innanför låset förhindrar att två trådar som båda hann
+    förbi den första kontrollen laddar modellen var för sig.
+    """
     global _encoder
     if _encoder is None:
-        import torch
-        from sentence_transformers import SentenceTransformer
-        if torch.backends.mps.is_available():
-            device = "mps"
-        elif torch.cuda.is_available():
-            device = "cuda"
-        else:
-            device = "cpu"
-        log.info("Laddar embedding-modell: %s (device: %s)", EMBEDDING_MODEL, device)
-        _encoder = SentenceTransformer(EMBEDDING_MODEL, device=device)
-        log.info("Embedding-modell laddad")
+        with _encoder_lock:
+            if _encoder is None:
+                import torch
+                from sentence_transformers import SentenceTransformer
+                if torch.backends.mps.is_available():
+                    device = "mps"
+                elif torch.cuda.is_available():
+                    device = "cuda"
+                else:
+                    device = "cpu"
+                log.info("Laddar embedding-modell: %s (device: %s)", EMBEDDING_MODEL, device)
+                _encoder = SentenceTransformer(EMBEDDING_MODEL, device=device)
+                log.info("Embedding-modell laddad")
     return _encoder
 
 
@@ -270,10 +283,109 @@ def expandera_fraga(query: str) -> list:
         return []
 
 
+# ── Svarstyper ─────────────────────────────────────────────────────────────────
+#
+# Alla fyra verktyg är steg i samma citeringskedja: kb_search hittar en
+# adress (volym_id + chunk_index), kb_get_chunk och kb_get_volume löser upp
+# den till text. Typade svar gör adressfälten maskinläsbara för den kedjan
+# i stället för att de bara syns i en formaterad textrad. Fält som saknas i
+# äldre eller ofullständiga poster (titel, år, stånd, URL, antal textstycken)
+# är X | None, eftersom källmaterialet ofta har luckor.
+
+
+class KbTraff(TypedDict):
+    """En sökträff ur kb_search. volym_id + chunk_index är adressen kb_get_chunk tar emot."""
+
+    volym_id: str
+    titel: str | None
+    ar_fran: int | None
+    ar_till: int | None
+    stand: str | None
+    chunk_index: int
+    chunk_antal: int | None
+    xml_url: str | None
+    pdf_only: bool
+    utdrag: str
+    trunkerat: bool
+
+
+class KbSokResultat(TypedDict):
+    """Svaret från kb_search."""
+
+    query: str
+    year_from: int | None
+    year_to: int | None
+    stand: str | None
+    antal: int
+    traffar: list[KbTraff]
+    nagot_trunkerat: bool
+
+
+class KbStycke(TypedDict):
+    """Svaret från kb_get_chunk — hela textstycket bakom en sökträff."""
+
+    volym_id: str
+    titel: str | None
+    ar_fran: int | None
+    ar_till: int | None
+    stand: str | None
+    xml_url: str | None
+    pdf_only: bool
+    begart_chunk_index: int
+    chunk_fran: int
+    chunk_till: int
+    chunk_antal: int | None
+    char_start: int | None
+    char_end: int | None
+    text: str
+    trunkerat: bool
+
+
+class KbVolym(TypedDict):
+    """Svaret från kb_get_volume — metadata och ett utdrag ur första textstycket."""
+
+    volym_id: str
+    titel: str | None
+    ar_fran: int | None
+    ar_till: int | None
+    stand: str | None
+    xml_url: str | None
+    pdf_only: bool
+    chunk_antal: int | None
+    indexerad_vid: str | None
+    forsta_chunk_index: int | None
+    utdrag: str | None
+    trunkerat: bool
+
+
+class KbVolymRad(TypedDict):
+    """En rad i listan från kb_list_volumes."""
+
+    volym_id: str
+    titel: str | None
+    ar_fran: int | None
+    ar_till: int | None
+    stand: str | None
+    chunks: int
+    pdf_only: bool
+
+
+class KbVolymLista(TypedDict):
+    """Svaret från kb_list_volumes."""
+
+    year_from: int | None
+    year_to: int | None
+    stand: str | None
+    antal: int
+    volymer: list[KbVolymRad]
+
+
 # ── MCP-server ─────────────────────────────────────────────────────────────────
 
-mcp = FastMCP(
+mcp = MCPServer(
     "KB Riksdagstryck 1521–1866",
+    version="2.1.0",
+    cache_hints=CACHE_HINTAR,
     instructions=(
         "MCP-server för ståndsriksdagens handlingar 1521–1866 ur Kungliga "
         "bibliotekets digitaliserade riksdagstryck. Verktygen har prefixet kb_. "
@@ -296,7 +408,7 @@ mcp = FastMCP(
 )
 
 
-@mcp.tool()
+@mcp.tool(title="Sök i riksdagstrycket", annotations=LASNING_DB)
 def kb_search(
     query: str,
     year_from: Optional[int] = None,
@@ -304,7 +416,7 @@ def kb_search(
     stand: Optional[str] = None,
     limit: int = 5,
     max_tecken: int = -1,
-) -> str:
+) -> KbSokResultat:
     """
     Sök i ståndsriksdagens handlingar (1521–1866) med hybridsökning.
 
@@ -426,79 +538,70 @@ def kb_search(
         + [vec_literal, vec_literal, limit]              # SELECT: embedding <=> i COALESCE×2, LIMIT
     )
 
-    conn = _hamta_db()
+    try:
+        conn = _hamta_db()
+    except ValueError as exc:
+        raise ToolError(str(exc)) from exc
+
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(sql, full_params)
             rows = cur.fetchall()
     except Exception as exc:
         log.error("kb_search SQL-fel: %s", exc)
-        return f"Sökfel: {exc}"
+        raise ToolError(
+            "Sökningen mot databasen misslyckades. Kontrollera att databasen är "
+            "igång och att schemat kb_riksdagstryck är indexerat."
+        ) from exc
     finally:
         conn.close()
 
-    if not rows:
-        filter_parts = []
-        if year_from or year_to:
-            filter_parts.append(f"år {year_from or '?'}–{year_to or '?'}")
-        if stand:
-            filter_parts.append(f"stånd: {stand}")
-        filter_str = " (" + ", ".join(filter_parts) + ")" if filter_parts else ""
-        return f"Inga resultat för {query!r}{filter_str}."
-
-    filter_desc = ""
-    if year_from or year_to:
-        filter_desc += f" | År: {year_from or '?'}–{year_to or '?'}"
-    if stand:
-        filter_desc += f" | Stånd: {stand}"
-
-    parts = [f"Sökte: {query!r}{filter_desc} — {len(rows)} resultat\n"]
+    traffar: list[KbTraff] = []
     nagot_trunkerat = False
 
-    for i, row in enumerate(rows, 1):
-        ar = (f"{row['ar_fran']}–{row['ar_till']}" if row["ar_fran"] else "okänt år")
-        pdf_mark = " [PDF-källa]" if row["pdf_only"] else ""
-
+    for row in rows:
         chunk_index = row["chunk_index"]
-        adress = f"{chunk_index}"
-        if row["chunk_antal"]:
-            adress += f" av {row['chunk_antal']}"
+        utdrag_hela = row["utdrag"] or ""
+        anvisning = f'Hela textstycket: kb_get_chunk("{row["volym_id"]}", {chunk_index})'
+        utdrag = _skar_ut(utdrag_hela, max_tecken, anvisning=anvisning)
+        traff_trunkerad = len(utdrag) != len(utdrag_hela)
+        nagot_trunkerat = nagot_trunkerat or traff_trunkerad
 
-        anvisning = (
-            f'Hela textstycket: kb_get_chunk("{row["volym_id"]}", {chunk_index})'
-            if chunk_index is not None else ""
-        )
-        utdrag = _skar_ut(row["utdrag"] or "", max_tecken, anvisning=anvisning)
-        if len(utdrag) != len(row["utdrag"] or ""):
-            nagot_trunkerat = True
-
-        parts.append(
-            f"━━━ Resultat {i} ━━━\n"
-            f"Volym:  {row['volym_id']}{pdf_mark}\n"
-            f"Titel:  {row['titel'] or '–'}\n"
-            f"År:     {ar}  |  Stånd: {row['stand'] or '–'}\n"
-            f"Chunk:  {adress}\n"
-            f"URL:    {row['xml_url'] or '–'}\n"
-            f"\n{utdrag}\n"
-        )
-
-    if nagot_trunkerat:
-        parts.append(
-            "Minst ett utdrag ovan är kapat. Ett ordagrant citat får aldrig bygga "
-            "på ett kapat utdrag — hämta hela textstycket med kb_get_chunk först."
+        traffar.append(
+            KbTraff(
+                volym_id=row["volym_id"],
+                titel=row["titel"],
+                ar_fran=row["ar_fran"],
+                ar_till=row["ar_till"],
+                stand=row["stand"],
+                chunk_index=chunk_index,
+                chunk_antal=row["chunk_antal"],
+                xml_url=row["xml_url"],
+                pdf_only=bool(row["pdf_only"]),
+                utdrag=utdrag,
+                trunkerat=traff_trunkerad,
+            )
         )
 
-    return "\n".join(parts)
+    return KbSokResultat(
+        query=query,
+        year_from=year_from,
+        year_to=year_to,
+        stand=stand,
+        antal=len(traffar),
+        traffar=traffar,
+        nagot_trunkerat=nagot_trunkerat,
+    )
 
 
-@mcp.tool()
+@mcp.tool(title="Hämta textstycke", annotations=LASNING_DB)
 def kb_get_chunk(
     volym_id: str,
     chunk_index: int,
     kontext: int = 0,
     max_tecken: int = 0,
     fran_tecken: int = 0,
-) -> str:
+) -> KbStycke:
     """
     Hämta hela textstycket bakom en sökträff, valfritt med omgivande stycken.
 
@@ -523,7 +626,11 @@ def kb_get_chunk(
     fran = chunk_index - kontext
     till = chunk_index + kontext
 
-    conn = _hamta_db()
+    try:
+        conn = _hamta_db()
+    except ValueError as exc:
+        raise ToolError(str(exc)) from exc
+
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(
@@ -541,7 +648,10 @@ def kb_get_chunk(
             rader = cur.fetchall()
     except Exception as exc:
         log.error("kb_get_chunk SQL-fel: %s", exc)
-        return f"Databasfel: {exc}"
+        raise ToolError(
+            "Hämtningen av textstycket misslyckades mot databasen. Kontrollera "
+            "att databasen är igång."
+        ) from exc
     finally:
         conn.close()
 
@@ -563,29 +673,17 @@ def kb_get_chunk(
             conn.close()
 
         if not vol:
-            return (
+            raise ToolError(
                 f"Volymen '{volym_id}' finns inte i databasen. "
                 "Använd kb_list_volumes() för att se tillgängliga volym-ID:n."
             )
-        return (
+        raise ToolError(
             f"Volymen '{volym_id}' finns, men har inget textstycke med "
             f"chunk_index {chunk_index}. Volymen har {vol[0]} stycken "
-            f"(numrerade från 0)."
+            "(numrerade från 0)."
         )
 
     meta = rader[0]
-    ar   = (f"{meta['ar_fran']}–{meta['ar_till']}" if meta["ar_fran"] else "okänt")
-    pdf_mark = " (konverterad från PDF)" if meta["pdf_only"] else ""
-
-    if len(rader) == 1:
-        rubrik_position = f"Chunk:      {rader[0]['chunk_index']}"
-    else:
-        rubrik_position = (
-            f"Chunk:      {rader[0]['chunk_index']}–{rader[-1]['chunk_index']} "
-            f"(begärt {chunk_index}, kontext ±{kontext})"
-        )
-    if meta["chunk_antal"]:
-        rubrik_position += f"  av {meta['chunk_antal']} i volymen"
 
     rader_text = []
     for r in rader:
@@ -593,7 +691,7 @@ def kb_get_chunk(
             markor = " ←" if r["chunk_index"] == chunk_index else ""
             rader_text.append(f"── Chunk {r['chunk_index']}{markor} ──")
         rader_text.append(r["chunk_text"] or "")
-    text = "\n".join(rader_text)
+    text_hela = "\n".join(rader_text)
 
     anvisning = ""
     if max_tecken and max_tecken > 0:
@@ -602,30 +700,35 @@ def kb_get_chunk(
             f"fran_tecken={fran_tecken + max_tecken})"
         )
 
-    huvud = [
-        f"Volym:      {volym_id}{pdf_mark}",
-        f"Titel:      {meta['titel'] or '–'}",
-        f"År:         {ar}  |  Stånd: {meta['stand'] or '–'}",
-        rubrik_position,
-    ]
-    if meta["char_start"] is not None:
-        huvud.append(
-            f"Position:   tecken {_tal(meta['char_start'])}–"
-            f"{_tal(rader[-1]['char_end'] or meta['char_end'] or 0)} i volymens fulltext"
-        )
-    huvud.append(f"URL:        {meta['xml_url'] or '–'}")
+    text = _skar_ut(text_hela, max_tecken, fran_tecken, anvisning)
 
-    return "\n".join(huvud) + "\n\n" + _skar_ut(
-        text, max_tecken, fran_tecken, anvisning
+    char_end_sista = rader[-1]["char_end"] if rader[-1]["char_end"] is not None else meta["char_end"]
+
+    return KbStycke(
+        volym_id=volym_id,
+        titel=meta["titel"],
+        ar_fran=meta["ar_fran"],
+        ar_till=meta["ar_till"],
+        stand=meta["stand"],
+        xml_url=meta["xml_url"],
+        pdf_only=bool(meta["pdf_only"]),
+        begart_chunk_index=chunk_index,
+        chunk_fran=rader[0]["chunk_index"],
+        chunk_till=rader[-1]["chunk_index"],
+        chunk_antal=meta["chunk_antal"],
+        char_start=meta["char_start"],
+        char_end=char_end_sista,
+        text=text,
+        trunkerat=len(text) != len(text_hela),
     )
 
 
-@mcp.tool()
+@mcp.tool(title="Hämta volymöversikt", annotations=LASNING_DB)
 def kb_get_volume(
     volym_id: str,
     max_tecken: int = -1,
     fran_tecken: int = 0,
-) -> str:
+) -> KbVolym:
     """
     Hämta metadata och ett textutdrag ur början av en specifik volym.
 
@@ -647,7 +750,11 @@ def kb_get_volume(
     if max_tecken < 0:
         max_tecken = MAX_TECKEN_UTDRAG
 
-    conn = _hamta_db()
+    try:
+        conn = _hamta_db()
+    except ValueError as exc:
+        raise ToolError(str(exc)) from exc
+
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(
@@ -658,7 +765,7 @@ def kb_get_volume(
             vol_row = cur.fetchone()
 
             if not vol_row:
-                return (
+                raise ToolError(
                     f"Volym '{volym_id}' finns inte i databasen. "
                     "Använd kb_list_volumes() för att se tillgängliga volymer."
                 )
@@ -678,43 +785,53 @@ def kb_get_volume(
             )
             first = cur.fetchone()
 
+    except ToolError:
+        raise
     except Exception as exc:
         log.error("kb_get_volume SQL-fel: %s", exc)
-        return f"Databasfel: {exc}"
+        raise ToolError(
+            "Hämtningen av volymen misslyckades mot databasen. Kontrollera att "
+            "databasen är igång."
+        ) from exc
     finally:
         conn.close()
 
-    ar = (f"{meta['ar_fran']}–{meta['ar_till']}" if meta and meta["ar_fran"] else "okänt")
-    pdf_mark   = " (konverterad från PDF)" if meta and meta["pdf_only"] else ""
     indexerad_vid = vol_row["indexerad_vid"].strftime("%Y-%m-%d %H:%M")
 
-    lines = [
-        f"Volym:      {volym_id}{pdf_mark}",
-        f"Titel:      {meta['titel'] if meta else '–'}",
-        f"År:         {ar}",
-        f"Stånd:      {meta['stand'] if meta else '–'}",
-        f"URL:        {meta['xml_url'] if meta else '–'}",
-        f"Textstycken: {vol_row['chunk_antal']} (chunk_index 0–{max(0, (vol_row['chunk_antal'] or 1) - 1)})",
-        f"Indexerad:  {indexerad_vid}",
-    ]
+    utdrag = None
+    trunkerat = False
+    forsta_index = None
     if first:
         forsta_index = first["chunk_index"] if first["chunk_index"] is not None else 0
         anvisning = (
             f'Hela stycket: kb_get_chunk("{volym_id}", {forsta_index}, max_tecken=0)'
         )
-        lines.append(
-            "\nFörsta textstycket:\n"
-            + _skar_ut(first["chunk_text"] or "", max_tecken, fran_tecken, anvisning)
-        )
-    return "\n".join(lines)
+        text_hela = first["chunk_text"] or ""
+        utdrag = _skar_ut(text_hela, max_tecken, fran_tecken, anvisning)
+        trunkerat = len(utdrag) != len(text_hela)
+
+    return KbVolym(
+        volym_id=volym_id,
+        titel=meta["titel"] if meta else None,
+        ar_fran=meta["ar_fran"] if meta else None,
+        ar_till=meta["ar_till"] if meta else None,
+        stand=meta["stand"] if meta else None,
+        xml_url=meta["xml_url"] if meta else None,
+        pdf_only=bool(meta["pdf_only"]) if meta else False,
+        chunk_antal=vol_row["chunk_antal"],
+        indexerad_vid=indexerad_vid,
+        forsta_chunk_index=forsta_index,
+        utdrag=utdrag,
+        trunkerat=trunkerat,
+    )
 
 
-@mcp.tool()
+@mcp.tool(title="Lista volymer", annotations=LASNING_DB)
 def kb_list_volumes(
     year_from: Optional[int] = None,
     year_to: Optional[int] = None,
     stand: Optional[str] = None,
-) -> str:
+) -> KbVolymLista:
     """
     Lista indexerade deldokument i databasen.
 
@@ -764,98 +881,47 @@ def kb_list_volumes(
         ORDER BY MIN(ar_fran) NULLS LAST, volym_id
     """
 
-    conn = _hamta_db()
+    try:
+        conn = _hamta_db()
+    except ValueError as exc:
+        raise ToolError(str(exc)) from exc
+
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(sql, params)
             rows = cur.fetchall()
     except Exception as exc:
         log.error("kb_list_volumes SQL-fel: %s", exc)
-        return f"Databasfel: {exc}"
+        raise ToolError(
+            "Listningen av volymer misslyckades mot databasen. Kontrollera att "
+            "databasen är igång."
+        ) from exc
     finally:
         conn.close()
 
-    if not rows:
-        return "Inga deldokument matchade filtret."
-
-    filter_desc = ""
-    if year_from or year_to:
-        filter_desc += f" | År: {year_from or '?'}–{year_to or '?'}"
-    if stand:
-        filter_desc += f" | Stånd: {stand}"
-
-    lines = [f"{len(rows)} deldokument{filter_desc}:\n"]
-    for row in rows:
-        ar       = (f"{row['ar_fran']}–{row['ar_till']}" if row["ar_fran"] else "okänt")
-        pdf_mark = " [PDF]" if row["pdf_only"] else ""
-        titel_str = f"  {row['titel']}" if row["titel"] else ""
-        lines.append(
-            f"{row['volym_id']}{pdf_mark}"
-            f"  |  {ar}  |  {row['stand'] or '?'}  |  {row['chunks']} textstycken"
-            f"{titel_str}"
+    volymer = [
+        KbVolymRad(
+            volym_id=row["volym_id"],
+            titel=row["titel"],
+            ar_fran=row["ar_fran"],
+            ar_till=row["ar_till"],
+            stand=row["stand"],
+            chunks=row["chunks"],
+            pdf_only=bool(row["pdf_only"]),
         )
-    return "\n".join(lines)
+        for row in rows
+    ]
 
-
-# ── HTTP-autentisering ────────────────────────────────────────────────────────
-
-def _make_auth_app(asgi_app, api_key: str):
-    """Wrap en ASGI-app med Bearer-token-autentisering."""
-    from starlette.applications import Starlette
-    from starlette.middleware import Middleware
-    from starlette.middleware.base import BaseHTTPMiddleware
-    from starlette.responses import PlainTextResponse
-    from starlette.routing import Mount
-
-    class ApiKeyMiddleware(BaseHTTPMiddleware):
-        async def dispatch(self, request, call_next):
-            token = (
-                request.headers.get("Authorization", "")
-                .removeprefix("Bearer ")
-                .strip()
-            )
-            if token != api_key:
-                return PlainTextResponse(
-                    "Obehörig: ogiltig eller saknad API-nyckel.", status_code=401
-                )
-            return await call_next(request)
-
-    return Starlette(
-        routes=[Mount("/", app=asgi_app)],
-        middleware=[Middleware(ApiKeyMiddleware)],
+    return KbVolymLista(
+        year_from=year_from,
+        year_to=year_to,
+        stand=stand,
+        antal=len(volymer),
+        volymer=volymer,
     )
 
 
 # ── Startpunkt ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    initiera_schema()
-    if MCP_TRANSPORT == "http":
-        import uvicorn
-
-        log.info("Preladdar embedding-modell...")
-        get_encoder()
-        log.info("Embedding-modell redo")
-
-        try:
-            asgi_app = mcp.streamable_http_app()
-        except AttributeError:
-            log.warning("mcp.streamable_http_app() saknas — försöker med sse_app()")
-            asgi_app = mcp.sse_app()
-
-        if MCP_API_KEY:
-            log.info("API-nyckelautentisering aktiverad")
-            app = _make_auth_app(asgi_app, MCP_API_KEY)
-        else:
-            log.warning(
-                "MCP_API_KEY är inte satt — servern körs utan autentisering. "
-                "Bind enbart till loopback (MCP_HOST=127.0.0.1) eller "
-                "skydda via reverse proxy."
-            )
-            app = asgi_app
-
-        log.info("Startar HTTP-transport på %s:%s", MCP_HOST, MCP_PORT)
-        uvicorn.run(app, host=MCP_HOST, port=MCP_PORT, log_level="info")
-    else:
-        log.info("Startar stdio-transport (lokal användning)")
-        mcp.run()
+    starta(mcp, standardport=8000, initiera=initiera_schema, forvarm_http=get_encoder)
