@@ -158,12 +158,23 @@ def initiera_schema() -> None:
 
 
 def embed_query(query: str) -> list:
-    """Generera en normaliserad embeddingvektor för en söksträng."""
-    vec = get_encoder().encode(
-        [query],
-        normalize_embeddings=True,
-        show_progress_bar=False,
-    )
+    """Generera en normaliserad embeddingvektor för en söksträng.
+
+    Täcker även fel i get_encoder() (modellen laddas här, första gången den
+    behövs) — ett nätverksfel eller en trasig modellcache ska ge ett
+    begripligt ToolError, inte en okommenterad krasch.
+    """
+    try:
+        vec = get_encoder().encode(
+            [query],
+            normalize_embeddings=True,
+            show_progress_bar=False,
+        )
+    except Exception as exc:
+        log.error("embed_query: kunde inte generera embedding: %s", exc)
+        raise ToolError(
+            f"Kunde inte generera sökembeddingen (embeddingmodellen: {exc})."
+        ) from exc
     return vec[0].tolist()
 
 

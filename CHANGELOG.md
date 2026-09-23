@@ -44,6 +44,9 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
   anrop hoppade då över det avkapade ordet. Anvisningen anger nu utdragets
   faktiska slutposition, så att på varandra följande utdrag tillsammans blir
   exakt den sammanhängande texten.
+- **Fel vid inläsning av embeddingmodellen i `embed_query`** (t.ex. ett
+  nätverksfel eller en trasig modellcache) gav tidigare en okommenterad
+  krasch. Kastas nu som `ToolError` med orsaken.
 
 ## [2.1.0] — 2026-08-10
 
