@@ -29,16 +29,15 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
   `mcp_transport.py` (Streamable HTTP). Den egna `_make_auth_app`-wrappern och
   SSE-reservvägen (`sse_app()`) är borttagna.
 
-### Brytande ändringar
+### Rättat
 
-- **http-läget kräver nu `MCP_API_KEY`** (fail-closed). Tidigare startade
-  servern utan nyckel, med en varningslogg. Uppstart utan nyckel avbryts nu
-  med felkod 2.
-- **Verktygens svar är strukturerade objekt**, inte längre en enda
-  formaterad textsträng. Fälten motsvarar samma information som förut, men
-  en klient som parsade textformatet (rubriker, `━━━`-avdelare) måste läsa
-  de strukturerade fälten i stället. Verktygsnamn och parameternamn är
-  oförändrade.
+- **`kb_list_volumes` sidindelas nu.** Ett ofiltrerat anrop matchar alla
+  2 447 deldokument, vilket gav ett svar (text + `structuredContent`) på
+  omkring 1,25 MB — över MCP:s ~1 MB-gräns. Nya, valfria parametrar
+  `max_antal` (standard 500, tak 1000) och `fran_position` sidindelar
+  träffmängden; svaret bär `totalt_matchande`, `har_fler` och
+  `nasta_position` för att hämta nästa sida. `year_from`, `year_to` och
+  `stand` är oförändrade.
 
 ## [2.1.0] — 2026-08-10
 

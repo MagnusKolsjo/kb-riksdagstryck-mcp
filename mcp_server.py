@@ -371,12 +371,23 @@ class KbVolymRad(TypedDict):
 
 
 class KbVolymLista(TypedDict):
-    """Svaret från kb_list_volumes."""
+    """Svaret från kb_list_volumes.
+
+    Sidindelad: `volymer` innehåller högst `max_antal` rader från och med
+    `fran_position` i den filtrerade, sorterade träffmängden. Ett ofiltrerat
+    anrop matchar alla 2 447 deldokument — utan tak skulle svaret (text och
+    structuredContent tillsammans) hamna över MCP:s ~1 MB-gräns.
+    """
 
     year_from: int | None
     year_to: int | None
     stand: str | None
+    max_antal: int
+    fran_position: int
     antal: int
+    totalt_matchande: int
+    har_fler: bool
+    nasta_position: int | None
     volymer: list[KbVolymRad]
 
 
@@ -826,11 +837,17 @@ def kb_get_volume(
     )
 
 
+MAX_ANTAL_VOLYMER_DEFAULT = 500
+MAX_ANTAL_VOLYMER_TAK = 1000
+
+
 @mcp.tool(title="Lista volymer", annotations=LASNING_DB)
 def kb_list_volumes(
     year_from: Optional[int] = None,
     year_to: Optional[int] = None,
     stand: Optional[str] = None,
+    max_antal: int = MAX_ANTAL_VOLYMER_DEFAULT,
+    fran_position: int = 0,
 ) -> KbVolymLista:
     """
     Lista indexerade deldokument i databasen.
@@ -842,15 +859,25 @@ def kb_list_volumes(
     volymen "rda_1521-1560"; delarna ligger i följd och slutar på __01, __02, __03 …
 
     Parametrar:
-      year_from — visa bara deldokument vars startår är >= detta värde
-      year_to   — visa bara deldokument vars slutår är <= detta värde
-      stand     — filtrera på stånd: adel, praster, borgare, bonder,
-                  bihang, riksdagsbeslut, samt register (sak- och
-                  personregister) och okant (KU-handlingar 1809–1815).
-                  Utelämna för alla stånd.
+      year_from     — visa bara deldokument vars startår är >= detta värde
+      year_to       — visa bara deldokument vars slutår är <= detta värde
+      stand         — filtrera på stånd: adel, praster, borgare, bonder,
+                      bihang, riksdagsbeslut, samt register (sak- och
+                      personregister) och okant (KU-handlingar 1809–1815).
+                      Utelämna för alla stånd.
+      max_antal     — max antal rader i svaret, 1–1000 (standard 500). Ett
+                      ofiltrerat anrop matchar alla 2 447 deldokument, så
+                      svaret sidindelas alltid.
+      fran_position — hoppa över så här många rader i den sorterade
+                      träffmängden (för att hämta nästa sida).
 
-    Returnerar en sorterad lista med volym-ID, år, stånd och antal textstycken.
+    Returnerar en sida av den sorterade listan (volym-ID, år, stånd, antal
+    textstycken), samt `totalt_matchande` och `har_fler`/`nasta_position` för
+    att hämta resten.
     """
+    max_antal = min(max(1, max_antal), MAX_ANTAL_VOLYMER_TAK)
+    fran_position = max(0, fran_position)
+
     conditions: list = []
     params: list = []
 
@@ -866,19 +893,26 @@ def kb_list_volumes(
 
     where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
 
+    # COUNT(*) OVER() ger totalt antal matchande rader i samma fråga som
+    # sidan hämtas, så att har_fler kan avgöras utan en andra rundtripp.
     sql = f"""
-        SELECT
-            volym_id,
-            MAX(titel)          AS titel,
-            MIN(ar_fran)        AS ar_fran,
-            MAX(ar_till)        AS ar_till,
-            MAX(stand)          AS stand,
-            COUNT(*)            AS chunks,
-            BOOL_OR(pdf_only)   AS pdf_only
-        FROM {_prefix()}riksdag_chunks
-        {where}
-        GROUP BY volym_id
-        ORDER BY MIN(ar_fran) NULLS LAST, volym_id
+        WITH grupperat AS (
+            SELECT
+                volym_id,
+                MAX(titel)          AS titel,
+                MIN(ar_fran)        AS ar_fran,
+                MAX(ar_till)        AS ar_till,
+                MAX(stand)          AS stand,
+                COUNT(*)            AS chunks,
+                BOOL_OR(pdf_only)   AS pdf_only
+            FROM {_prefix()}riksdag_chunks
+            {where}
+            GROUP BY volym_id
+        )
+        SELECT *, COUNT(*) OVER() AS totalt_matchande
+        FROM grupperat
+        ORDER BY ar_fran NULLS LAST, volym_id
+        LIMIT %s OFFSET %s
     """
 
     try:
@@ -888,7 +922,7 @@ def kb_list_volumes(
 
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            cur.execute(sql, params)
+            cur.execute(sql, params + [max_antal, fran_position])
             rows = cur.fetchall()
     except Exception as exc:
         log.error("kb_list_volumes SQL-fel: %s", exc)
@@ -912,7 +946,16 @@ def kb_list_volumes(
         for row in rows
     ]
 
+    totalt_matchande = rows[0]["totalt_matchande"] if rows else 0
+    nasta_position = fran_position + len(volymer)
+    har_fler = nasta_position < totalt_matchande
+
     return KbVolymLista(
+        max_antal=max_antal,
+        fran_position=fran_position,
+        totalt_matchande=totalt_matchande,
+        har_fler=har_fler,
+        nasta_position=nasta_position if har_fler else None,
         year_from=year_from,
         year_to=year_to,
         stand=stand,
