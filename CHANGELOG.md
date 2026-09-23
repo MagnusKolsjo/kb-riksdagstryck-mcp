@@ -47,6 +47,11 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
 - **Fel vid inläsning av embeddingmodellen i `embed_query`** (t.ex. ett
   nätverksfel eller en trasig modellcache) gav tidigare en okommenterad
   krasch. Kastas nu som `ToolError` med orsaken.
+- **`kb_get_chunk`s andra databasanslutning** (uppslaget som skiljer okänd
+  volym från okänt chunk-index) var inte skyddad mot att själva anslutningen
+  misslyckades — bara mot fel i frågan. Hela uppslaget ligger nu i samma
+  skydd. `kb_get_volume`s `indexerad_vid` läser nu ett fält som i teorin kan
+  vara `null` utan att krascha på `.strftime`.
 
 ## [2.1.0] — 2026-08-10
 

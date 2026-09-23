@@ -692,19 +692,23 @@ def kb_get_chunk(
     if not rader:
         # Skilj "okänd volym" från "giltig volym, men chunk-numret finns inte" —
         # ett felmeddelande ska visa vägen framåt, inte bara konstatera fel.
-        conn = _hamta_db()
+        # Hela uppslaget (även själva anslutningen) är skyddat: går den inte
+        # att öppna behandlas det som "kunde inte avgöra" i stället för att
+        # krascha med ett okommenterat undantag.
         try:
-            with conn.cursor() as cur:
-                cur.execute(
-                    f"SELECT chunk_antal FROM {_prefix()}indexerade_volymer "
-                    f"WHERE volym_id = %s",
-                    (volym_id,),
-                )
-                vol = cur.fetchone()
+            conn2 = _hamta_db()
+            try:
+                with conn2.cursor() as cur:
+                    cur.execute(
+                        f"SELECT chunk_antal FROM {_prefix()}indexerade_volymer "
+                        f"WHERE volym_id = %s",
+                        (volym_id,),
+                    )
+                    vol = cur.fetchone()
+            finally:
+                conn2.close()
         except Exception:
             vol = None
-        finally:
-            conn.close()
 
         if not vol:
             raise ToolError(
@@ -827,7 +831,10 @@ def kb_get_volume(
     finally:
         conn.close()
 
-    indexerad_vid = vol_row["indexerad_vid"].strftime("%Y-%m-%d %H:%M")
+    _indexerad_vid_rad = vol_row["indexerad_vid"]
+    indexerad_vid = (
+        _indexerad_vid_rad.strftime("%Y-%m-%d %H:%M") if _indexerad_vid_rad else None
+    )
 
     utdrag = None
     trunkerat = False
