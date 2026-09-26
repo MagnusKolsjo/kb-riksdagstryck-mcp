@@ -22,7 +22,7 @@ debug_index.html
 *.log
 logs/
 
-# Lokalt skill — installeras i Claude Desktop, hör inte till serverns repo
+# Lokalt skill — installeras i AI-assistenten, hör inte till serverns repo
 skills/
 
 # Körrapporter och analysutdata — genereras av skripten, hör inte till repot

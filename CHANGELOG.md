@@ -12,6 +12,7 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
 
 ### Ändrat
 
+- Texterna är produktneutrala: README, konfigurationsexempel, kommentarer och äldre CHANGELOG-poster nämner MCP-klienten i stället för en viss klient.
 - User-Agent-strängen följer huvudversionen: `kb-riksdagstryck-mcp/3.0`.
 - **Migrerad till `mcp` 2.x** (`MCPServer` från `mcp.server.mcpserver`, tidigare
   `FastMCP`). Egna kopior av `mcp_transport.py` och `mcp_annotationer.py` från

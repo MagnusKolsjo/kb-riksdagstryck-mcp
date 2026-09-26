@@ -232,7 +232,7 @@ Servern stöder två transportlägen: **stdio** (standard) och **http** (hostad 
 
 #### Lokalt via stdio
 
-Exempel med Claude Desktop — lägg till i `claude_desktop_config.json`:
+Exempel — lägg till i MCP-klientens konfiguration (`mcpServers`):
 
 ```json
 {

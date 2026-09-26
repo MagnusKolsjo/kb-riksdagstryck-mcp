@@ -9,7 +9,7 @@
 --    (alla NULL-default, inget tvång att populera retroaktivt)
 --
 -- Idempotent. Säker att köra om.
--- Förutsättning: Claude Desktop ska vara stängt.
+-- Förutsättning: MCP-klienten ska vara stängd.
 -- ============================================================
 
 \set ON_ERROR_STOP on
