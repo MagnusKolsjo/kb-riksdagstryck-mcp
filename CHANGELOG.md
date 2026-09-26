@@ -8,8 +8,11 @@ Versionshanteringen följer [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.0] — 2026-09-26
+
 ### Ändrat
 
+- User-Agent-strängen följer huvudversionen: `kb-riksdagstryck-mcp/3.0`.
 - **Migrerad till `mcp` 2.x** (`MCPServer` från `mcp.server.mcpserver`, tidigare
   `FastMCP`). Egna kopior av `mcp_transport.py` och `mcp_annotationer.py` från
   projektets mallar styr uppstart och verktygsannotationer.

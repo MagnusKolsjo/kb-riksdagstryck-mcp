@@ -58,7 +58,7 @@ LOG_FILE       = OUTPUT_DIR / "download_log.json"
 # som identifierar sig som bot. Tester 2026-05-19 visade att ingen
 # `compatible`-variant fungerar. Byt till PROJECT_UA när KB vitlistar den.
 # Detaljer i 02-kb-riksdagstryck-1521-1866.md.
-PROJECT_UA = "kb-riksdagstryck-mcp/1.0 (https://github.com/MagnusKolsjo/kb-riksdagstryck-mcp)"
+PROJECT_UA = "kb-riksdagstryck-mcp/3.0 (https://github.com/MagnusKolsjo/kb-riksdagstryck-mcp)"
 
 HEADERS = {
     "User-Agent": (

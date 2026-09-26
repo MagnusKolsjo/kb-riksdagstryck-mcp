@@ -415,7 +415,7 @@ class KbVolymLista(TypedDict):
 
 mcp = MCPServer(
     "KB Riksdagstryck 1521–1866",
-    version="2.1.0",
+    version="3.0.0",
     cache_hints=CACHE_HINTAR,
     instructions=(
         "MCP-server för ståndsriksdagens handlingar 1521–1866 ur Kungliga "
