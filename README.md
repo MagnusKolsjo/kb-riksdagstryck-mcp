@@ -297,14 +297,15 @@ ekvivalenter och fler historiska varianter:
 
 ```env
 QUERY_EXPANSION_ENABLED=true
-QUERY_EXPANSION_BASE_URL=https://api.anthropic.com/v1   # eller annan leverantör
-QUERY_EXPANSION_API_KEY=din-nyckel
-QUERY_EXPANSION_MODEL=claude-haiku-4-5-20251001
+QUERY_EXPANSION_BASE_URL=<leverantörens OpenAI-kompatibla adress>
+QUERY_EXPANSION_API_KEY=<API-nyckel>
+QUERY_EXPANSION_MODEL=<modellnamn>
 ```
 
-Alla OpenAI-kompatibla endpoints stöds: Claude, OpenAI, Ollama (`http://localhost:11434/v1`),
+Alla OpenAI-kompatibla endpoints stöds, till exempel Anthropic, OpenAI, Ollama (`http://localhost:11434/v1`),
 LM Studio (`http://localhost:1234/v1`) m.fl. Lämna `QUERY_EXPANSION_BASE_URL` tomt
-för standard OpenAI-endpoint.
+för standard OpenAI-endpoint. Modellnamnet anges alltid i `.env`; servern
+har inget förval.
 
 ### Promptfilen — anpassa eller bygg en skill
 

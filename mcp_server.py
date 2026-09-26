@@ -27,7 +27,7 @@ Transport-lägen (styrs via MCP_TRANSPORT i .env, se mcp_transport.py):
 Query-expansion (valfritt, styrs via QUERY_EXPANSION_ENABLED i .env):
   Utökar söktermen med historiska stavningsvarianter och latinska ekvivalenter
   via ett valfritt externt LLM-anrop. Stöder alla OpenAI-kompatibla endpoints
-  (t.ex. Claude, OpenAI, Ollama, LM Studio). Prompten i prompts/expansion_prompt.txt
+  (t.ex. Anthropic, OpenAI, Ollama, LM Studio). Prompten i prompts/expansion_prompt.txt
   kan anpassas fritt — se README för detaljer.
 """
 
